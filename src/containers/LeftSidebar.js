@@ -3,6 +3,7 @@ import { NavLink,  Routes, Link , useLocation} from 'react-router-dom'
 import SidebarSubmenu from './SidebarSubmenu';
 import XMarkIcon  from '@heroicons/react/24/outline/XMarkIcon'
 import { useDispatch } from 'react-redux';
+import './LeftSidebar.css';
 
 function LeftSidebar(){
     const location = useLocation();
@@ -28,6 +29,7 @@ function LeftSidebar(){
             </button>
                 <div className="grid gap-3 border-b border-b-black pb-2 justify-center items-center gap-x-6">
                     <img className="h-26 w-26 rounded-full" src="https://via.placeholder.com/100" alt="" />
+                    {/*  */}
                     <p className='text-center text-[1rem] font-semibold'>แอดมิน (กยศ.)</p>
                 </div>   
                 {

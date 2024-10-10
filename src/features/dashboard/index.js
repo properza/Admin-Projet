@@ -1,34 +1,52 @@
-import DashboardStats from './components/DashboardStats'
-import AmountStats from './components/AmountStats'
-import PageStats from './components/PageStats'
 import TitleCard2 from '../../components/Cards/TiileCard2'
-
-import UserGroupIcon from '@heroicons/react/24/outline/UserGroupIcon'
-import UsersIcon from '@heroicons/react/24/outline/UsersIcon'
-import CircleStackIcon from '@heroicons/react/24/outline/CircleStackIcon'
-import CreditCardIcon from '@heroicons/react/24/outline/CreditCardIcon'
-import UserChannels from './components/UserChannels'
-import LineChart from './components/LineChart'
-import BarChart from './components/BarChart'
-import DashboardTopBar from './components/DashboardTopBar'
 import { useDispatch } from 'react-redux'
 import { showNotification } from '../common/headerSlice'
-import DoughnutChart from './components/DoughnutChart'
-import { useState } from 'react'
+import ModalCA from './Modalcreat/ModalCA'
+import React, { useState, useEffect } from 'react';
 
 function Dashboard() {
-
     const dispatch = useDispatch()
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
 
     const updateDashboardPeriod = (newRange) => {
-        dispatch(showNotification({ message: `Period updated to ${newRange.startDate} to ${newRange.endDate}`, status: 1 }))
-    }
+        const currentDate = new Date();
+    
+        const formattedDate = currentDate.toLocaleDateString('th-TH', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+        });
+    
+        // Dispatch the notification with the formatted date
+        dispatch(showNotification({
+            message: `ได้สร้างกิจกรรมสำเร็จแล้วในวันที่ ${formattedDate}`, // Use the formatted date
+            status: 1
+        }));
+    
+        setIsModalOpen(false);
+    };
 
-    const createBTN = <button className='btn text-white bg-[#FF9C00] hover:bg-yellow-600'>สร้างกิจกรรม</button>;
+    const createBTN = (
+        <button
+            onClick={openModal} // Trigger modal open on button click
+            className='btn text-white bg-[#FF9C00] hover:bg-yellow-600'>
+            สร้างกิจกรรม
+        </button>
+    );
+
     const iconBtn = "cursor-pointer hover:bg-gray-300 rounded-md";
+
     return (
         <>
+            {isModalOpen && <ModalCA onClose={closeModal} onSave={updateDashboardPeriod} />}
             <TitleCard2 title={'ประเภทกิจกรรม'} title2={'(กยศ.)'} subTitle={'ทั้งหมด 4 รายการ'} TopSideButtons={createBTN}>
                 <table className='table text-center'>
                     <thead className=''>
