@@ -71,7 +71,7 @@ export default function ModalCA({ onClose, onSave }) {
                 latitude: defaultLat,
                 longitude: defaultLng
             }));
-            getProvinceName(defaultLat, defaultLng); // Fetch province name for default location
+            getProvinceName(defaultLat, defaultLng);
         }
     }, []);
 
@@ -83,7 +83,7 @@ export default function ModalCA({ onClose, onSave }) {
             const province = address.state || address.province || "Unknown";
             setFormValues(prevState => ({
                 ...prevState,
-                province: province // Set province in state
+                province: province
             }));
         } catch (error) {
             console.error("Error fetching province name: ", error);
@@ -99,7 +99,7 @@ export default function ModalCA({ onClose, onSave }) {
                     latitude: lat,
                     longitude: lng
                 }));
-                getProvinceName(lat, lng); // Fetch province name on map click
+                getProvinceName(lat, lng);
             }
         });
 
