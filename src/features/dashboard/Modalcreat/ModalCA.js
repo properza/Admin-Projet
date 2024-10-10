@@ -114,7 +114,7 @@ export default function ModalCA({ onClose, onSave }) {
                 <div className="modal-header">
                     สร้างกิจกรรม
                 </div>
-                <div className="modal-body">
+                <div className="modal-body overflow-y-auto h-[50vh]">
                     <div className="grid grid-cols-2 gap-2 justify-center">
                         <InputText
                             labelTitle={'ชื่อกิจกรรม'}
