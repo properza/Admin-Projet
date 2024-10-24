@@ -1,0 +1,114 @@
+/* Modal overlay to cover the entire screen */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  /* Modal container */
+  .modal-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 100%;
+    animation: fadeIn 0.3s ease;
+  }
+  
+  /* Modal animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Modal header */
+  .modal-header {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  
+  /* Modal body */
+  .modal-body {
+    margin-bottom: 20px;
+    font-size: 1em;
+    text-align: center;
+  }
+  
+  /* Modal footer (for buttons) */
+  .modal-footer {
+    text-align: right;
+  }
+  
+  /* Modal close button */
+  .modal-close-btn {
+    background-color: #ff5c5c;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+  }
+  
+  .modal-close-btn:hover {
+    background-color: #ff4c4c;
+  }
+  
+  /* RESPONSIVE DESIGN */
+  
+  /* Large screen (desktops) */
+  @media (min-width: 1024px) {
+    .modal-container {
+      max-width: 600px;
+    }
+  }
+  
+  /* Medium screen (tablets) */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .modal-container {
+      max-width: 80%;
+      padding: 15px;
+    }
+    .modal-header {
+      font-size: 1.3em;
+    }
+    .modal-close-btn {
+      padding: 8px 16px;
+    }
+  }
+  
+  /* Small screen (phones) */
+  @media (max-width: 767px) {
+    .modal-container {
+      max-width: 90%;
+      padding: 10px;
+    }
+    .modal-header {
+      font-size: 1.2em;
+    }
+    .modal-body {
+      font-size: 0.9em;
+    }
+    .modal-close-btn {
+      padding: 8px 12px;
+      font-size: 0.9em;
+    }
+  }
+  

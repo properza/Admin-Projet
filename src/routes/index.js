@@ -21,7 +21,7 @@ const DocComponents = lazy(() => import('../pages/DocComponents'))
 
 const routes = [
   {
-    path: '/dashboard', // the url
+    path: '/home', // the url
     component: Dashboard, // view rendered
   },
   {
@@ -29,19 +29,11 @@ const routes = [
     component: Welcome, // view rendered
   },
   {
-    path: '/leads',
+    path: '/CreateActivities',
     component: Leads,
   },
   {
-    path: '/settings-team',
-    component: Team,
-  },
-  {
-    path: '/calendar',
-    component: Calendar,
-  },
-  {
-    path: '/transactions',
+    path: '/history',
     component: Transactions,
   },
   {
@@ -65,16 +57,20 @@ const routes = [
     component: DocComponents,
   },
   {
-    path: '/integration',
+    path: '/specail-st',
     component: Integration,
   },
   {
-    path: '/charts',
+    path: '/general-st',
     component: Charts,
   },
   {
     path: '/404',
     component: Page404,
+  },
+  {
+    path: '/reward',
+    component: Calendar,
   },
   {
     path: '/blank',

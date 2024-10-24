@@ -28,17 +28,17 @@ const routes = [
     name: 'กิจกรรม', // name that appear in Sidebar
   },
   {
-    path: '/app/dashboard',
+    path: '/app/home',
     icon: <Squares2X2Icon className={iconClasses}/>, 
     name: 'กิจกรรมทั้งหมด',
   },
   {
-    path: '/app/leads', // url
+    path: '/app/CreateActivities', // url
     icon: <InboxArrowDownIcon className={iconClasses}/>, // icon component
     name: 'สร้างกิจกรรม', // name that appear in Sidebar
   },
   {
-    path: '/app/transactions', // url
+    path: '/app/history', // url
     icon: <CurrencyDollarIcon className={iconClasses}/>, // icon component
     name: 'ประวัติกิจกรรม', // name that appear in Sidebar
   },
@@ -47,12 +47,12 @@ const routes = [
     name: 'รายชื่อนักศึกษา', // name that appear in Sidebar
   },
   {
-    path: '/app/charts', // url
+    path: '/app/general-st', // url
     icon: <ChartBarIcon className={iconClasses}/>, // icon component
     name: 'รายชื่อนักศึกษาทั่วไป', // name that appear in Sidebar
   },
   {
-    path: '/app/integration', // url
+    path: '/app/specail-st', // url
     icon: <BoltIcon className={iconClasses}/>, // icon component
     name: 'รายชื่อนักศึกษา กยศ.', // name that appear in Sidebar
   },
@@ -61,7 +61,7 @@ const routes = [
     name: 'รางวัล', // name that appear in Sidebar
   },
   {
-    path: '/app/calendar', // url
+    path: '/app/reward', // url
     icon: <CalendarDaysIcon className={iconClasses}/>, // icon component
     name: 'ของรางวัล', // name that appear in Sidebar
   },
