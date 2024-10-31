@@ -21,7 +21,7 @@ export default function ModalCA({ onClose, onSave }) {
     });
     
     const toggleMapVisibility = () => {
-        setIsMapVisible(prev => !prev); // Toggle the map visibility state
+        setIsMapVisible(prev => !prev);
     };
 
     console.log(formValues);
@@ -50,17 +50,17 @@ export default function ModalCA({ onClose, onSave }) {
                     latitude: lat,
                     longitude: lng
                 }));
-                getProvinceName(lat, lng); // Fetch province name
+                getProvinceName(lat, lng);
             }, (error) => {
                 console.error("Error obtaining location: ", error);
-                const defaultLat = 16.87724352429937; // Default latitude
-                const defaultLng = 99.12706375122072; // Default longitude
+                const defaultLat = 16.87724352429937;
+                const defaultLng = 99.12706375122072;
                 setFormValues(prevState => ({
                     ...prevState,
                     latitude: defaultLat,
                     longitude: defaultLng
                 }));
-                getProvinceName(defaultLat, defaultLng); // Fetch province name for default location
+                getProvinceName(defaultLat, defaultLng);
             });
         } else {
             console.error("Geolocation is not supported by this browser.");
