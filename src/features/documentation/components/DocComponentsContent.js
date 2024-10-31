@@ -1,97 +1,114 @@
-import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import InputText from '../../../components/Input/InputText'
-import Title from '../../../components/Typography/Title'
-import Subtitle from '../../../components/Typography/Subtitle'
-import ErrorText from '../../../components/Typography/ErrorText'
-import HelperText from '../../../components/Typography/HelperText'
-
+import { useEffect , useState } from 'react'
+import { useDispatch , useSelector } from 'react-redux'
 import { setPageTitle, showNotification } from '../../common/headerSlice'
-import TitleCard from '../../../components/Cards/TitleCard'
+import TitleCard2 from '../../../components/Cards/TiileCard2'
 
 function DocComponentsContent(){
 
     const dispatch = useDispatch()
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const updateFormValue = () => {
-        // Dummy function for input text component
-    }
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
+
+    const updateDashboardPeriod = (newRange) => {
+        const currentDate = new Date();
+    
+        const formattedDate = currentDate.toLocaleDateString('th-TH', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+        });
+    
+        // Dispatch the notification with the formatted date
+        dispatch(showNotification({
+            message: `ได้สร้างกิจกรรมสำเร็จแล้วในวันที่ ${formattedDate}`, // Use the formatted date
+            status: 1
+        }));
+    
+        setIsModalOpen(false);
+    };
+
+    const createBTN = (
+        <button
+            onClick={openModal} // Trigger modal open on button click
+            className='btn text-white bg-[#FF9C00] hover:bg-yellow-600'>
+            เพิ่มของรางวัล
+        </button>
+    );
+
+    const iconBtn = "cursor-pointer hover:bg-gray-300 rounded-md";
 
     return(
         <>
-            <article className="prose">
-              <h1 className="" >Components</h1>
+            {/* {isModalOpen && <ModalCA onClose={closeModal} onSave={updateDashboardPeriod} />} */}
+            <TitleCard2 title={'รางวัล'} subTitle={'ทั้งหมด 1 รายการ'} TopSideButtons={createBTN}>
+                <table className='table text-center'>
+                    <thead className=''>
+                        <tr>
+                            <th>No.</th>
+                            <th>กิจกรรม</th>
+                            <th>วันที่อัปเดตล่าสุด</th>
+                            <th>รูปของรางวัล</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+                            <td>1</td>
+                            <td>น้ำเปล่า</td>
+                            <td>10 ส.ค. 2024 </td>
+                            <td>
+                                <div className="flex justify-center items-center">
+                                    <button className='cursor-pointer hover:bg-gray-300 rounded-md'>
+                                        <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M3.84961 4.79961C3.84961 4.48135 3.97604 4.17612 4.20108 3.95108C4.42612 3.72604 4.73135 3.59961 5.04961 3.59961H8.64961C8.96787 3.59961 9.27309 3.72604 9.49814 3.95108C9.72318 4.17612 9.84961 4.48135 9.84961 4.79961V8.39961C9.84961 8.71787 9.72318 9.02309 9.49814 9.24814C9.27309 9.47318 8.96787 9.59961 8.64961 9.59961H5.04961C4.73135 9.59961 4.42612 9.47318 4.20108 9.24814C3.97604 9.02309 3.84961 8.71787 3.84961 8.39961V4.79961ZM6.24961 7.19961V5.99961H7.44961V7.19961H6.24961ZM3.84961 15.5996C3.84961 15.2813 3.97604 14.9761 4.20108 14.7511C4.42612 14.526 4.73135 14.3996 5.04961 14.3996H8.64961C8.96787 14.3996 9.27309 14.526 9.49814 14.7511C9.72318 14.9761 9.84961 15.2813 9.84961 15.5996V19.1996C9.84961 19.5179 9.72318 19.8231 9.49814 20.0481C9.27309 20.2732 8.96787 20.3996 8.64961 20.3996H5.04961C4.73135 20.3996 4.42612 20.2732 4.20108 20.0481C3.97604 19.8231 3.84961 19.5179 3.84961 19.1996V15.5996ZM6.24961 17.9996V16.7996H7.44961V17.9996H6.24961ZM15.8496 3.59961C15.5313 3.59961 15.2261 3.72604 15.0011 3.95108C14.776 4.17612 14.6496 4.48135 14.6496 4.79961V8.39961C14.6496 8.71787 14.776 9.02309 15.0011 9.24814C15.2261 9.47318 15.5313 9.59961 15.8496 9.59961H19.4496C19.7679 9.59961 20.0731 9.47318 20.2981 9.24814C20.5232 9.02309 20.6496 8.71787 20.6496 8.39961V4.79961C20.6496 4.48135 20.5232 4.17612 20.2981 3.95108C20.0731 3.72604 19.7679 3.59961 19.4496 3.59961H15.8496ZM17.0496 5.99961V7.19961H18.2496V5.99961H17.0496Z" fill="#232325" />
+                                            <path d="M13.4496 4.79961C13.4496 4.48135 13.3232 4.17612 13.0981 3.95108C12.8731 3.72604 12.5679 3.59961 12.2496 3.59961C11.9313 3.59961 11.6261 3.72604 11.4011 3.95108C11.176 4.17612 11.0496 4.48135 11.0496 4.79961V5.99961C11.0496 6.31787 11.176 6.62309 11.4011 6.84814C11.6261 7.07318 11.9313 7.19961 12.2496 7.19961C12.5679 7.19961 12.8731 7.07318 13.0981 6.84814C13.3232 6.62309 13.4496 6.31787 13.4496 5.99961V4.79961ZM12.2496 8.39961C12.5679 8.39961 12.8731 8.52604 13.0981 8.75108C13.3232 8.97612 13.4496 9.28135 13.4496 9.59961V10.7996H15.8496C16.1679 10.7996 16.4731 10.926 16.6981 11.1511C16.9232 11.3761 17.0496 11.6813 17.0496 11.9996C17.0496 12.3179 16.9232 12.6231 16.6981 12.8481C16.4731 13.0732 16.1679 13.1996 15.8496 13.1996H12.2496C11.9313 13.1996 11.6261 13.0732 11.4011 12.8481C11.176 12.6231 11.0496 12.3179 11.0496 11.9996V9.59961C11.0496 9.28135 11.176 8.97612 11.4011 8.75108C11.6261 8.52604 11.9313 8.39961 12.2496 8.39961V8.39961ZM19.4496 10.7996C19.1313 10.7996 18.8261 10.926 18.6011 11.1511C18.376 11.3761 18.2496 11.6813 18.2496 11.9996C18.2496 12.3179 18.376 12.6231 18.6011 12.8481C18.8261 13.0732 19.1313 13.1996 19.4496 13.1996C19.7679 13.1996 20.0731 13.0732 20.2981 12.8481C20.5232 12.6231 20.6496 12.3179 20.6496 11.9996C20.6496 11.6813 20.5232 11.3761 20.2981 11.1511C20.0731 10.926 19.7679 10.7996 19.4496 10.7996ZM11.0496 15.5996C11.0496 15.2813 11.176 14.9761 11.4011 14.7511C11.6261 14.526 11.9313 14.3996 12.2496 14.3996H13.4496C13.7679 14.3996 14.0731 14.526 14.2981 14.7511C14.5232 14.9761 14.6496 15.2813 14.6496 15.5996C14.6496 15.9179 14.5232 16.2231 14.2981 16.4481C14.0731 16.6732 13.7679 16.7996 13.4496 16.7996V19.1996C13.4496 19.5179 13.3232 19.8231 13.0981 20.0481C12.8731 20.2732 12.5679 20.3996 12.2496 20.3996C11.9313 20.3996 11.6261 20.2732 11.4011 20.0481C11.176 19.8231 11.0496 19.5179 11.0496 19.1996V15.5996ZM8.64961 13.1996C8.96787 13.1996 9.27309 13.0732 9.49814 12.8481C9.72318 12.6231 9.84961 12.3179 9.84961 11.9996C9.84961 11.6813 9.72318 11.3761 9.49814 11.1511C9.27309 10.926 8.96787 10.7996 8.64961 10.7996H5.04961C4.73135 10.7996 4.42612 10.926 4.20108 11.1511C3.97604 11.3761 3.84961 11.6813 3.84961 11.9996C3.84961 12.3179 3.97604 12.6231 4.20108 12.8481C4.42612 13.0732 4.73135 13.1996 5.04961 13.1996H8.64961ZM20.6496 15.5996C20.6496 15.9179 20.5232 16.2231 20.2981 16.4481C20.0731 16.6732 19.7679 16.7996 19.4496 16.7996H17.0496C16.7313 16.7996 16.4261 16.6732 16.2011 16.4481C15.976 16.2231 15.8496 15.9179 15.8496 15.5996C15.8496 15.2813 15.976 14.9761 16.2011 14.7511C16.4261 14.526 16.7313 14.3996 17.0496 14.3996H19.4496C19.7679 14.3996 20.0731 14.526 20.2981 14.7511C20.5232 14.9761 20.6496 15.2813 20.6496 15.5996ZM19.4496 20.3996C19.7679 20.3996 20.0731 20.2732 20.2981 20.0481C20.5232 19.8231 20.6496 19.5179 20.6496 19.1996C20.6496 18.8813 20.5232 18.5761 20.2981 18.3511C20.0731 18.126 19.7679 17.9996 19.4496 17.9996H15.8496C15.5313 17.9996 15.2261 18.126 15.0011 18.3511C14.776 18.5761 14.6496 18.8813 14.6496 19.1996C14.6496 19.5179 14.776 19.8231 15.0011 20.0481C15.2261 20.2732 15.5313 20.3996 15.8496 20.3996H19.4496Z" fill="#232325" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                            <td>
+                                <div className="flex justify-center gap-5 items-center">
+                                    
+                                    <button>
+                                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <rect width="17" height="17" transform="translate(0.25 0.5)" fill="white" />
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M7.04922 3.89987C6.14748 3.89987 5.28268 4.25808 4.64506 4.89571C4.00743 5.53333 3.64922 6.39813 3.64922 7.29987C3.64922 8.20161 4.00743 9.06641 4.64506 9.70403C5.28268 10.3417 6.14748 10.6999 7.04922 10.6999C7.95095 10.6999 8.81576 10.3417 9.45338 9.70403C10.091 9.06641 10.4492 8.20161 10.4492 7.29987C10.4492 6.39813 10.091 5.53333 9.45338 4.89571C8.81576 4.25808 7.95095 3.89987 7.04922 3.89987ZM1.94922 7.29987C1.94912 6.49722 2.13846 5.70588 2.50186 4.9902C2.86526 4.27453 3.39245 3.65473 4.04056 3.18122C4.68866 2.70771 5.43937 2.39385 6.23164 2.26518C7.02391 2.13651 7.83537 2.19665 8.60001 2.44072C9.36466 2.68479 10.0609 3.10589 10.6321 3.66977C11.2033 4.23366 11.6334 4.9244 11.8873 5.68583C12.1412 6.44726 12.2118 7.25787 12.0934 8.05174C11.975 8.8456 11.6708 9.60031 11.2057 10.2545L15.3002 14.3489C15.455 14.5092 15.5407 14.7239 15.5387 14.9468C15.5368 15.1697 15.4474 15.3829 15.2898 15.5405C15.1322 15.6981 14.919 15.7875 14.6962 15.7894C14.4733 15.7913 14.2586 15.7057 14.0983 15.5508L10.0047 11.4572C9.24168 11.9998 8.34406 12.3218 7.41019 12.3881C6.47632 12.4543 5.54223 12.2623 4.71027 11.8329C3.87832 11.4035 3.1806 10.7534 2.69358 9.95387C2.20656 9.15429 1.94904 8.23609 1.94922 7.29987Z" fill="#FF8329" />
+                                        </svg>
+                                    </button>
 
-                We have added some global components that are used commonly inside the project.
+                                    <button>
+                                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <rect width="17" height="17" transform="translate(0.25 0.5)" fill="white" />
+                                            <path d="M14.7506 2.99841C14.5115 2.75944 14.1873 2.6252 13.8492 2.6252C13.5112 2.6252 13.1869 2.75946 12.9478 2.99845C12.9478 2.99847 12.9478 2.99848 12.9478 2.9985L6.62422 9.32207V11.1248H8.42698L14.7506 4.80126C14.9896 4.56216 15.1239 4.23792 15.1239 3.89983C15.1239 3.56179 14.9896 3.23759 14.7506 2.9985C14.7506 2.99847 14.7506 2.99844 14.7506 2.99841ZM14.7506 2.99841L15.0511 2.69793L14.7506 2.99841Z" fill="#4400A5" stroke="white" stroke-width="0.85" />
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M1.94922 5.60039C1.94922 5.14952 2.12833 4.71712 2.44714 4.39831C2.76595 4.0795 3.19835 3.90039 3.64922 3.90039H7.04922C7.27465 3.90039 7.49085 3.98994 7.65026 4.14935C7.80967 4.30876 7.89922 4.52496 7.89922 4.75039C7.89922 4.97582 7.80967 5.19203 7.65026 5.35143C7.49085 5.51084 7.27465 5.60039 7.04922 5.60039H3.64922V14.1004H12.1492V10.7004C12.1492 10.475 12.2388 10.2588 12.3982 10.0993C12.5576 9.93994 12.7738 9.85039 12.9992 9.85039C13.2247 9.85039 13.4409 9.93994 13.6003 10.0993C13.7597 10.2588 13.8492 10.475 13.8492 10.7004V14.1004C13.8492 14.5513 13.6701 14.9837 13.3513 15.3025C13.0325 15.6213 12.6001 15.8004 12.1492 15.8004H3.64922C3.19835 15.8004 2.76595 15.6213 2.44714 15.3025C2.12833 14.9837 1.94922 14.5513 1.94922 14.1004V5.60039Z" fill="#4400A5" />
+                                        </svg>
+                                    </button>
 
-                {/* Typography*/}
-              <h2 id="component1">Typography</h2>
-                <div>
-                    These components are present under <span className="badge mt-0 mb-0 badge-ghost">/components/Typography</span> folder. It accepts styleClass as props which can be used to pass additional className for style. It has following components which you can import and use it - 
-                    <div className="mockup-code mt-4">
-                    <pre className='my-0 py-0'><code>{'import  Title from "../components/Typography/Title"\n  <Title>Your Title here</Title>'}</code></pre>
-                    </div>
-                    <ul>
-                      <li><span className='font-bold'>Title</span> - Use this component to show title 
-                      <Title>Title Example</Title>
-                       </li>
-                      <li><span className='font-bold'>Subtitle</span> - Component that shows text smaller than title 
-                      <Subtitle styleClass="mt-4 mb-6">Subtitle Example</Subtitle>
-                      </li>
-                      <li><span className='font-bold'>ErrorText</span> - Used for showing error messages 
-                      <ErrorText styleClass="mt-2">Error Text Example</ErrorText>
-                      </li>
-                      <li><span className='font-bold'>HelperText</span> - Used for showing secondary message 
-                      <HelperText styleClass="">Helper Text Example</HelperText></li>
-                    </ul>
-                </div>
+                                    <button>
+                                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <rect width="17" height="17" transform="translate(0.25 0.5)" fill="white" />
+                                            <path d="M13.707 5.45833L13.0929 14.0589C13.0675 14.4163 12.9075 14.7508 12.6453 14.995C12.3831 15.2392 12.0381 15.375 11.6798 15.375H5.81761C5.4593 15.375 5.11429 15.2392 4.85207 14.995C4.58986 14.7508 4.42993 14.4163 4.40449 14.0589L3.79036 5.45833H6.6237V3.33333C6.6237 3.14547 6.69833 2.9653 6.83116 2.83247C6.964 2.69963 7.14417 2.625 7.33203 2.625H10.1654C10.3532 2.625 10.5334 2.69963 10.6662 2.83247C10.7991 2.9653 10.8737 3.14547 10.8737 3.33333V5.45833H13.707Z" fill="white" />
+                                            <path d="M7.33203 8.29167V12.5417M10.1654 8.29167V12.5417M3.08203 5.45833H14.4154M13.707 5.45833L13.0929 14.0589C13.0675 14.4163 12.9075 14.7508 12.6453 14.995C12.3831 15.2392 12.0381 15.375 11.6798 15.375H5.81761C5.4593 15.375 5.11429 15.2392 4.85207 14.995C4.58986 14.7508 4.42993 14.4163 4.40449 14.0589L3.79036 5.45833H13.707ZM10.8737 5.45833V3.33333C10.8737 3.14547 10.7991 2.9653 10.6662 2.83247C10.5334 2.69963 10.3532 2.625 10.1654 2.625H7.33203C7.14417 2.625 6.964 2.69963 6.83116 2.83247C6.69833 2.9653 6.6237 3.14547 6.6237 3.33333V5.45833H10.8737Z" stroke="#FF2929" stroke-width="1.60002" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </button>
 
+                                </div>
+                            </td>
+                            
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </TitleCard2>
 
-                 {/* Form Input*/}
-              <h2 id="component2">Form Input</h2>
-                <p>
-                      Many times we have to use form input like text, select one or toogle and in every file we have to handle its state management, here we have added global form component that can be used in any file and state variables can be managed by passing props to it. It is present in <span className="badge mt-0 mb-0 badge-ghost">/components/Input</span> folder. 
-                </p>
-                Ex- 
-                <div className="mockup-code mt-4">
-                    <pre className='my-0 py-0'><code>{'const INITIAL_LEAD_OBJ = {\n   first_name : "", \n   last_name : "", \n   email : "" \n  } \n   const [leadObj, setLeadObj] = useState(INITIAL_LEAD_OBJ) \n   const updateFormValue = ({updateType, value}) => {\n    setErrorMessage("") \n    setLeadObj({...leadObj, [updateType] : value})\n   }\n\n<InputText type="text" defaultValue={leadObj.first_name}  \n  updateType="first_name" containerStyle="mt-4"  \n  labelTitle="First Name" updateFormValue={updateFormValue}/>'}</code></pre>
-                </div>
-                <InputText type="text" defaultValue={"input value"}  updateType="first_name" containerStyle="mt-3" labelTitle="Label Title" updateFormValue={updateFormValue}/>
-                
-
-               <p> This example is from add new lead modal, here we are importing component for creating text input and passing some props to handle its content and state variable. Description of props are as follows - </p>
-                <ul>
-                  <li><span className='font-bold'>type</span> - Input type value like number, date, time etc.. </li>
-                  <li><span className='font-bold'>updateType</span> - This is used to update state variable in parent component</li>
-                  <li><span className='font-bold'>containerStyle</span> - Style class for container of input, which include label as well</li>
-                  <li><span className='font-bold'>labelTitle</span> - Title of the label</li>
-                  <li><span className='font-bold'>updateFormValue</span> - Function of parent component to update state variable</li>
-                </ul>
-            
-
-
-
-                 {/* Cards */}
-                 <h2 id="component3">Cards</h2>
-                <p>
-                    <a href="https://daisyui.com/components/card/" target="_blank">Daisy UI</a> already have many cards layout, on top of that we have added one card component that accept title props and shows children inside its body. Also there is a divider between title and body of card. On more provision has been added to add buttons on top left side of card using TopSideButtons props (check leads page).
-
-                </p>
-                Ex - 
-                <div className="mockup-code mt-4">
-                    <pre className='my-0 py-0'><code>{'<TitleCard title={"Card Title"}> <h1>Card Body</h1></TitleCard>'}</code></pre>
-                </div>
-                <div className='p-8 bg-base-300 rounded-lg mt-4'>
-                    <TitleCard title={"Card Title"}> <h1>Card Body</h1></TitleCard>
-                </div>
-
-
-                 
-
-                    <div className='h-24'></div>
-
-
-            </article>
         </>
     )
 }

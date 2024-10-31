@@ -32,11 +32,11 @@ const routes = [
     icon: <Squares2X2Icon className={iconClasses}/>, 
     name: 'กิจกรรมทั้งหมด',
   },
-  {
-    path: '/app/CreateActivities', // url
-    icon: <InboxArrowDownIcon className={iconClasses}/>, // icon component
-    name: 'สร้างกิจกรรม', // name that appear in Sidebar
-  },
+  // {
+  //   path: '/app/CreateActivities', // url
+  //   icon: <InboxArrowDownIcon className={iconClasses}/>, // icon component
+  //   name: 'สร้างกิจกรรม', // name that appear in Sidebar
+  // },
   {
     path: '/app/history', // url
     icon: <CurrencyDollarIcon className={iconClasses}/>, // icon component
@@ -61,7 +61,7 @@ const routes = [
     name: 'รางวัล', // name that appear in Sidebar
   },
   {
-    path: '/app/reward', // url
+    path: '/app/reward-st', // url
     icon: <CalendarDaysIcon className={iconClasses}/>, // icon component
     name: 'ของรางวัล', // name that appear in Sidebar
   },

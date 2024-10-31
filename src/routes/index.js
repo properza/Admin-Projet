@@ -24,37 +24,17 @@ const routes = [
     path: '/home', // the url
     component: Dashboard, // view rendered
   },
-  {
-    path: '/welcome', // the url
-    component: Welcome, // view rendered
-  },
-  {
-    path: '/CreateActivities',
-    component: Leads,
-  },
+  // {
+  //   path: '/welcome', // the url
+  //   component: Welcome, // view rendered
+  // },
+  // {
+  //   path: '/CreateActivities',
+  //   component: Leads,
+  // },
   {
     path: '/history',
     component: Transactions,
-  },
-  {
-    path: '/settings-profile',
-    component: ProfileSettings,
-  },
-  {
-    path: '/settings-billing',
-    component: Bills,
-  },
-  {
-    path: '/getting-started',
-    component: GettingStarted,
-  },
-  {
-    path: '/features',
-    component: DocFeatures,
-  },
-  {
-    path: '/components',
-    component: DocComponents,
   },
   {
     path: '/specail-st',
@@ -69,12 +49,8 @@ const routes = [
     component: Page404,
   },
   {
-    path: '/reward',
-    component: Calendar,
-  },
-  {
-    path: '/blank',
-    component: Blank,
+    path: '/reward-st',
+    component: DocComponents,
   },
 ]
 
