@@ -1,14 +1,20 @@
 import routes from '../routes/sidebar'
+import React,{useState , useEffect} from 'react';
 import { NavLink,  Routes, Link , useLocation} from 'react-router-dom'
 import SidebarSubmenu from './SidebarSubmenu';
 import XMarkIcon  from '@heroicons/react/24/outline/XMarkIcon'
-import { useDispatch } from 'react-redux';
+import { useDispatch , useSelector } from 'react-redux';
+import { fetchCurrentUser , logoutUser } from '../components/common/userSlice';
 import './LeftSidebar.css';
 
 function LeftSidebar(){
     const location = useLocation();
+    const dispatch = useDispatch();
+    const currentUser = useSelector(state=>state.user.currentUser);
 
-    const dispatch = useDispatch()
+    useEffect(()=>{
+        dispatch(fetchCurrentUser())
+    },[dispatch])
 
 
     const close = (e) => {
@@ -16,9 +22,14 @@ function LeftSidebar(){
     }
 
     function logoutUser(){
-        localStorage.clear();
+        localStorage.removeItem('userToken');
         window.location.href = '/'
     }
+
+    const roleSelect = currentUser?.role === 'super_admin' ? 'สูงสุด' 
+                        : currentUser?.role === 'normal' ? 'ทั่วไป'
+                        : currentUser?.role === 'special' ? 'กยศ.'
+                        :null
 
     return(
         <div className="drawer-side  z-30  ">
@@ -30,7 +41,7 @@ function LeftSidebar(){
                 <div className="grid gap-3 border-b border-b-black pb-2 justify-center items-center gap-x-6">
                     <img className="h-26 w-26 rounded-full" src="https://via.placeholder.com/100" alt="" />
                     {/*  */}
-                    <p className='text-center text-[1rem] font-semibold'>แอดมิน (กยศ.)</p>
+                    <p className='text-center text-[1rem] font-semibold'>แอดมิน ( {roleSelect} )</p>
                 </div>   
                 {
                     routes.map((route, k) => (

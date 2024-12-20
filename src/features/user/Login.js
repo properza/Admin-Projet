@@ -1,8 +1,13 @@
-import {useState, useRef} from 'react'
-import {Link} from 'react-router-dom'
-import LandingIntro from './LandingIntro'
+import { useState, useEffect } from 'react'
+import { useDispatch , useSelector } from 'react-redux'
+import { Link, useNavigate } from "react-router-dom";
+import { unwrapResult } from "@reduxjs/toolkit";
+import Swal from "sweetalert2";
 import ErrorText from  '../../components/Typography/ErrorText'
 import InputText from '../../components/Input/InputText'
+import { loginUser } from '../../components/common/userSlice'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 function Login(){
 
@@ -13,22 +18,61 @@ function Login(){
 
     const [loading, setLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
-    const [loginObj, setLoginObj] = useState(INITIAL_LOGIN_OBJ)
+    const [loginObj, setLoginObj] = useState(INITIAL_LOGIN_OBJ);
+    const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    const submitForm = (e) =>{
-        e.preventDefault()
-        setErrorMessage("")
+    const submitForm = async (e) => {
+        e.preventDefault();
 
-        if(loginObj.emailId.trim() === "")return setErrorMessage("Email Id is required! (use any value)")
-        if(loginObj.password.trim() === "")return setErrorMessage("Password is required! (use any value)")
-        else{
-            setLoading(true)
-            // Call API to check user credentials and save token in localstorage
-            localStorage.setItem("token", "DumyTokenHere")
-            setLoading(false)
-            window.location.href = '/app/home'
+        if (!loginObj.emailId || !loginObj.password) {
+            setErrorMessage("Email and password are required!");
+            return;
         }
-    }
+
+        try {
+            const resultAction = await dispatch(loginUser({
+                username: loginObj.emailId,
+                password: loginObj.password,
+            }));
+            const result = unwrapResult(resultAction);
+            if (result) {
+                Swal.fire({
+                    title: "เข้าสู่ระบบสำเร็จ",
+                    icon: "success",
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                });
+                setTimeout(() => {
+                    Swal.close();
+                    navigate("/app/home");
+                    // navigate("/app/welcome");
+                }, 1000);
+            }
+        } catch (error) {
+            console.log("Login failed:", error);
+            let errorMessage = "Invalid email or password. Please try again.";
+            if (error || error.message === "Invalid credentials") {
+                errorMessage = "กรุณากรอกอีเมล และ password ให้ถูกต้อง";
+            } else if (error?.message) {
+                errorMessage = error.message;
+            }
+            setErrorMessage(errorMessage);
+            Swal.fire({
+                title: "Login Failed",
+                html: errorMessage,
+                icon: "warning",
+                showCancelButton: false,
+                showConfirmButton: true,
+                confirmButtonColor: '#3085d6',  // สีของปุ่มยืนยัน
+                cancelButtonColor: '#d33'
+            });
+            setTimeout(() => {
+                Swal.close();
+            }, 3000);
+        }
+    };
 
     const updateFormValue = ({updateType, value}) => {
         setErrorMessage("")
@@ -55,8 +99,6 @@ function Login(){
 
                         <ErrorText styleClass="mt-8">{errorMessage}</ErrorText>
                         <button type="submit" className={"btn mt-2 w-full btn-primary" + (loading ? " loading" : "")}>Login</button>
-
-                        <div className='text-center mt-4'>Don't have an account yet? <Link to="/register"><span className="  inline-block  hover:text-primary hover:underline hover:cursor-pointer transition duration-200">Register</span></Link></div>
                     </form>
                 </div>
             </div>

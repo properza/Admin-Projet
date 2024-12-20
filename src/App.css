@@ -36,3 +36,46 @@
     transform: rotate(360deg);
   }
 }
+
+.pagination {
+  display: flex;
+  list-style: none;
+  padding: 0;
+}
+
+.page-item {
+  margin: 0 5px;
+}
+
+.page-link {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.page-link:hover {
+  background-color: #f1f1f1;
+  
+}
+
+.active .page-link {
+  background-color: #4400A5;
+  color: white;
+  border-color: #4400A5;
+}
+
+.disabled .page-link {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.swal2-confirm {
+  background-color: #CB0000 !important;
+  color: white !important;
+}
+
+.swal2-cancel {
+  background-color: #E0E2E7 !important;
+  color: #000 !important;
+}

@@ -1,46 +1,52 @@
-import React, { lazy, useEffect } from 'react'
+import React, { lazy, useEffect , Suspense } from 'react'
 import './App.css';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
 import { themeChange } from 'theme-change'
 import checkAuth from './app/auth';
 import initializeApp from './app/init';
+import { useSelector , useDispatch } from 'react-redux';
+import {fetchCurrentUser} from './components/common/userSlice'
 
 // Importing pages
 const Layout = lazy(() => import('./containers/Layout'))
 const Login = lazy(() => import('./pages/Login'))
 
 
-// Initializing different libraries
 initializeApp()
 
-
-// Check for login and initialize axios
-const token = checkAuth()
-
-
 function App() {
+  const dispatch = useDispatch();
+  const userToken = useSelector((state) => state.user.userToken);
+
+  // useEffect(() => {
+  //   themeChange(false);
+  //   if (userToken) {
+  //     dispatch(fetchCurrentUser());
+  //   }
+  // }, [dispatch, userToken]);
+
 
   useEffect(() => {
-    // 👆 daisy UI themes initialization
     themeChange(false)
   }, [])
 
+  // console.log("User Token:", userToken);
 
   return (
-    <>
-      <Router>
+    <Suspense fallback={<div>Loading...</div>}>
+      <Router basename='/'>
         <Routes>
+          <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
-          
-          {/* Place new routes over this */}
-          <Route path="/app/*" element={<Layout />} />
-
-          <Route path="*" element={<Navigate to={token ? "/app/dashboard" : "/login"} replace />}/>
-
+          <Route
+            path="/app/*"
+            element={userToken ? <Layout /> : <Navigate to="/" replace />}
+          />
+          {!userToken && <Route path="*" element={<Navigate to="/" replace />} />}
         </Routes>
       </Router>
-    </>
-  )
+    </Suspense>
+  );
 }
 
 export default App

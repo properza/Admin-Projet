@@ -9,24 +9,32 @@ import SelectBox from '../../../components/Input/SelectBox';
 import { fetchCurrentUser, createEvent } from '../../../components/common/userSlice';
 import Swal from 'sweetalert2';
 
-export default function ModalCA({ onClose, onSave }) {
+export default function ModalDetail({ onClose }) {
     const dispatch = useDispatch();
     const currentUser = useSelector(state => state.user.currentUser);
     const [isMapVisible, setIsMapVisible] = useState(false);
+
+    const formattedStartDate = userDetails?.startDate ? userDetails.startDate.split('T')[0] : '';
+    const formattedEndDate = userDetails?.endDate ? userDetails.endDate.split('T')[0] : '';
+    const formattedStartTime = userDetails?.startTime ? userDetails.startTime.slice(0,5) : '';
+    const formattedEndTime = userDetails?.endTime ? userDetails.endTime.slice(0,5) : '';
+
     const [formValues, setFormValues] = useState({
-        activityName: '',
-        course: '',
-        startDate: '',
-        endDate: '',
-        startTime: '',
-        endTime: '',
-        Nameplace: '',
-        latitude: null,
-        longitude: null,
-        province: '',
+        activityName: userDetails?.activityName || '',
+        course: userDetails?.course || '',
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+        startTime: formattedStartTime,
+        endTime: formattedEndTime,
+        Nameplace: userDetails?.Nameplace || '',
+        latitude: userDetails?.latitude ? parseFloat(userDetails.latitude) : null,
+        longitude: userDetails?.longitude ? parseFloat(userDetails.longitude) : null,
+        province: userDetails?.province || '',
         admin_id: currentUser?.adminID,
         event_type: currentUser?.role
     });
+
+    console.log(userDetails);
 
     useEffect(() => {
         if (!currentUser) {
@@ -57,22 +65,31 @@ export default function ModalCA({ onClose, onSave }) {
             year: 'numeric',
         });
 
-        dispatch(createEvent(formValues))
+        dispatch(editEvent({ eventID , formValues}))
         .unwrap()
         .then((res) => {
             console.log(res);
             dispatch(showNotification({
-                message: `ได้สร้างกิจกรรมสำเร็จแล้วในวันที่ ${formattedDate}`, // Use the formatted date
+                message: `ได้แก้ไขกิจกรรมสำเร็จแล้วในวันที่ ${formattedDate}`, // Use the formatted date
                 status: 1
             }));
-            onSave(); // ถ้าสำเร็จให้เรียก onSave() ต่อ
+            Swal.fire({
+                icon: 'success',
+                title: 'แก้ไขกิจกรรมสำเร็จ',
+                // text: 'กรุณาทำรายการใหม่อีกครั้ง',
+                showConfirmButton:false,
+                timer:1500
+            });
+            onSave();
         })
         .catch((error) => {
             console.error("Error creating event: ", error);
             Swal.fire({
                 icon: 'error',
-                title: 'สร้างกิจกรรมไม่สำเร็จ',
-                text: 'กรุณากรอกข้อมูลให้ครบ',
+                title: 'แก้ไขกิจกรรมไม่สำเร็จ!',
+                text: 'กรุณาทำรายการใหม่อีกครั้ง',
+                showConfirmButton:false,
+                timer:1500
             });
         });
     };
@@ -159,24 +176,25 @@ export default function ModalCA({ onClose, onSave }) {
         ) : null;
     }
 
+   
     return (
         <div className="modal-overlay">
             <div className="modal-container">
                 <div className="modal-header">
-                    สร้างกิจกรรม
+                    แก้ไขกิจกรรม : {userDetails?.Nameplace ?? 'ไม่ระบุ'}
                 </div>
                 <div className="modal-body overflow-y-auto h-[50vh]">
                     <div className="grid grid-cols-2 gap-2 justify-center">
                         <InputText
                             labelTitle={'ชื่อกิจกรรม'}
                             type={'text'}
-                            placeholder={'ชื่อกิจกรรม'}
+                            placeholder={userDetails?.activityName ?? 'ไม่ระบุ'}
                             updateFormValue={handleUpdateFormValue}
                             updateType="activityName"
                         />
                         <SelectBox
                             labelTitle={'หลักสูตร'}
-                            placeholder={'กรุณาเลือกหลักสูตร'}
+                            placeholder={userDetails?.course ?? 'ไม่ระบุ'}
                             options={courses}
                             updateFormValue={handleUpdateFormValue}
                             updateType='course'
@@ -184,28 +202,28 @@ export default function ModalCA({ onClose, onSave }) {
                         <InputText
                             labelTitle={'วันที่เริ่มต้น'}
                             type={'date'}
-                            placeholder={'เลือกวันที่เริ่มต้น'}
+                            defaultValue={formattedStartDate}
                             updateFormValue={handleUpdateFormValue}
                             updateType="startDate"
                         />
                         <InputText
                             labelTitle={'วันที่สิ้นสุด'}
                             type={'date'}
-                            placeholder={'เลือกวันที่สิ้นสุด'}
+                            defaultValue={formattedEndDate}
                             updateFormValue={handleUpdateFormValue}
                             updateType="endDate"
                         />
                         <InputText
                             labelTitle={'เวลาที่เริ่มต้น'}
                             type={'time'}
-                            placeholder={'เลือกเวลาที่เริ่มต้น'}
+                            defaultValue={formattedStartTime}
                             updateFormValue={handleUpdateFormValue}
                             updateType="startTime"
                         />
                         <InputText
                             labelTitle={'เวลาที่สิ้นสุด'}
                             type={'time'}
-                            placeholder={'เลือกเวลาที่สิ้นสุด'}
+                            defaultValue={formattedEndTime}
                             updateFormValue={handleUpdateFormValue}
                             updateType="endTime"
                         />
@@ -213,7 +231,7 @@ export default function ModalCA({ onClose, onSave }) {
                     <InputText
                         labelTitle={'ชื่อสถานที่จัดกิจกรรม'}
                         type={'text'}
-                        placeholder={'ชื่อสถานที่จัดกิจกรรม'}
+                        placeholder={userDetails?.Nameplace?? 'ไม่ระบุ'}
                         updateFormValue={handleUpdateFormValue}
                         updateType="Nameplace"
                     />
