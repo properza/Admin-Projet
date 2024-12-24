@@ -3,7 +3,7 @@ import { QRCodeSVG } from 'qrcode.react'; // Updated import
 import Swal from 'sweetalert2';
 
 const ModalQRCode = ({ onClose, eventID, userDetails }) => {
-    const qrUrl = `https://profile-lyp5.onrender.com/event?referral=${eventID}`;
+    const qrUrl = `https://5f1a-2001-44c8-4881-6eea-3d04-64ac-25ad-dc6f.ngrok-free.app?referral=${eventID}`;
     const svgRef = useRef(null);
 
     const handleDownload = () => {
