@@ -26,30 +26,30 @@ const Editeventinfo = (eventID) => `${baseUrl}events/event/${eventID}/edit`;
 const DeleteEventdata = (eventID) => `${baseUrl}events/event/${eventID}/delete`;
 
 //Line OA 
-const LineMessageurl = `https://api.line.me/v2/bot/message/push`;
-const LineToken = `B9lf5C0/FmQOghd+1DbtV4XpwCAdIDAdR6GzIdGY1w92cdAx5EYH6MdmWMIZz9YMzFbJgkcOyOOWt0eugCqBE7J/hafjbMUWmLGhxGQFxZKS1Nnd/yt2h7NSBv9ySQjZ+8tGNagfwzBHcufhXYiyJwdB04t89/1O/w1cDnyilFU=`;
+const LineMessageurl = `${baseUrl}admin/sendMessage`;
 
 export const SentMessage = createAsyncThunk(
   "users/SentMessages",
-  async (SentData, { rejectWithValue }) => { 
+  async (updatedSentData, { rejectWithValue , getState }) => { 
+    const token = getState().user.userToken;
 
-    if (!LineToken) {
-      return rejectWithValue("Authentication token is missing!");
+    if (!token) {
+      return rejectWithValue("No token found");
     }
 
     try {
       const response = await axios.post(LineMessageurl,
-        SentData,
+        updatedSentData,
         {
           headers: {
-            'Authorization': `Bearer ${LineToken}`,
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
-            "Access-Control-Allow-Origin": "*",
           },
         }
       );
       return response.data;
     } catch (error) {
+      console.error("Error sending message:", error);
       if (error.response && error.response.data) {
         return rejectWithValue(error.response.data.message);
       }

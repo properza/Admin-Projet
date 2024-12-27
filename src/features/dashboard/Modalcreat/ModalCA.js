@@ -8,6 +8,8 @@ import InputText from '../../../components/Input/InputText';
 import SelectBox from '../../../components/Input/SelectBox';
 import { fetchCurrentUser, createEvent , SentMessage } from '../../../components/common/userSlice';
 import Swal from 'sweetalert2';
+import { format } from 'date-fns';
+import { th } from 'date-fns/locale';
 
 export default function ModalCA({ onClose, onSave }) {
     const dispatch = useDispatch();
@@ -28,15 +30,6 @@ export default function ModalCA({ onClose, onSave }) {
         event_type: currentUser?.role
     });
 
-    const [SentData , setSentData] = useState({
-        to: 'Uc1a196965ffc33b51056211b541c0836',
-        messages:[
-            {
-                type:'text',
-                text: `${currentUser?.role}`
-            }
-        ]
-    })
 
     useEffect(() => {
         if (!currentUser) {
@@ -59,33 +52,57 @@ export default function ModalCA({ onClose, onSave }) {
             console.error("Admin ID is missing");
             return;
         }
-        const currentDate = new Date();
     
+        const currentDate = new Date();
         const formattedDate = currentDate.toLocaleDateString('th-TH', {
             day: 'numeric',
             month: 'long',
             year: 'numeric',
         });
-
+    
+        const startDate = formValues.startDate 
+            ? format(new Date(formValues.startDate), "d MMM yyyy", { locale: th }) 
+            : 'วันที่ไม่ถูกต้อง';
+        const startTime = formValues.startTime 
+            ? format(new Date(`1970-01-01T${formValues.startTime}:00`), "HH:mm", { locale: th }) 
+            : 'เวลาไม่ถูกต้อง';
+        const endTime = formValues.endTime 
+            ? format(new Date(`1970-01-01T${formValues.endTime}:00`), "HH:mm", { locale: th }) 
+            : 'เวลาไม่ถูกต้อง';
+    
+        const messageText = `เชิญชวน นศ. ${currentUser?.role === 'special' ? 'กยศ.' : 'ทั่วไป'} เข้าร่วม ${formValues.activityName} ที่จะจัดขึ้นในวันที่ ${startDate} เวลา ${startTime} - ${endTime} ณ ${formValues.Nameplace}`;
+    
+        const updatedSentData = {
+            to: 'Uc1a196965ffc33b51056211b541c0836',
+            messages: [
+                {
+                    type: 'text',
+                    text: messageText
+                }
+            ]
+        };
+    
         dispatch(createEvent(formValues))
-        .unwrap()
-        .then((res) => {
-            console.log(res);
-            dispatch(showNotification({
-                message: `ได้สร้างกิจกรรมสำเร็จแล้วในวันที่ ${formattedDate}`, // Use the formatted date
-                status: 1
-            }));
-            dispatch(SentMessage(SentData));
-            onSave();
-        })
-        .catch((error) => {
-            console.error("Error creating event: ", error);
-            Swal.fire({
-                icon: 'error',
-                title: 'สร้างกิจกรรมไม่สำเร็จ',
-                text: 'กรุณากรอกข้อมูลให้ครบ',
+            .unwrap()
+            .then((res) => {
+                console.log(res);
+                dispatch(showNotification({
+                    message: `ได้สร้างกิจกรรมสำเร็จแล้วในวันที่ ${formattedDate}`,
+                    status: 1
+                }));
+                return dispatch(SentMessage(updatedSentData));
+            })
+            .then(() => {
+                onSave();
+            })
+            .catch((error) => {
+                console.error("Error creating event: ", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'สร้างกิจกรรมไม่สำเร็จ',
+                    text: 'กรุณากรอกข้อมูลให้ครบ',
+                });
             });
-        });
     };
 
     const courses = [
