@@ -20,9 +20,43 @@ const GetAll ={
   specail: (page) => `${baseUrl}customer/customers?page=${page}&per_page=10&st_tpye=กยศ.`
 }
 
+
 const CreateEventURL =`${baseUrl}admin/createEvent`
 const Editeventinfo = (eventID) => `${baseUrl}events/event/${eventID}/edit`;
 const DeleteEventdata = (eventID) => `${baseUrl}events/event/${eventID}/delete`;
+
+//Line OA 
+const LineMessageurl = `https://api.line.me/v2/bot/message/push`;
+const LineToken = `B9lf5C0/FmQOghd+1DbtV4XpwCAdIDAdR6GzIdGY1w92cdAx5EYH6MdmWMIZz9YMzFbJgkcOyOOWt0eugCqBE7J/hafjbMUWmLGhxGQFxZKS1Nnd/yt2h7NSBv9ySQjZ+8tGNagfwzBHcufhXYiyJwdB04t89/1O/w1cDnyilFU=`;
+
+export const SentMessage = createAsyncThunk(
+  "users/SentMessages",
+  async (SentData, { rejectWithValue }) => { 
+
+    if (!LineToken) {
+      return rejectWithValue("Authentication token is missing!");
+    }
+
+    try {
+      const response = await axios.post(LineMessageurl,
+        SentData,
+        {
+          headers: {
+            'Authorization': `Bearer ${LineToken}`,
+            'Content-Type': 'application/json',
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data.message);
+      }
+      return rejectWithValue("An error occurred while transferring the commission.");
+    }
+  }
+);
 
 // login
 export const loginUser = createAsyncThunk(
@@ -332,6 +366,8 @@ const userSlice = createSlice({
           } else if (action.type.includes("getEventDetails")) {
             state.getEventDetailsData = action.payload;
           } else if (action.type.includes("createEvents")) {
+            state.users.push(action.payload);
+          } else if (action.type.includes("SentMessages")) {
             state.users.push(action.payload);
           } else if (action.type.includes("loginUser")) {
             state.currentUser = action.payload.user;

@@ -6,7 +6,7 @@ import './leaflet.css';
 import './ModalCA.css';
 import InputText from '../../../components/Input/InputText';
 import SelectBox from '../../../components/Input/SelectBox';
-import { fetchCurrentUser, createEvent } from '../../../components/common/userSlice';
+import { fetchCurrentUser, createEvent , SentMessage } from '../../../components/common/userSlice';
 import Swal from 'sweetalert2';
 
 export default function ModalCA({ onClose, onSave }) {
@@ -27,6 +27,16 @@ export default function ModalCA({ onClose, onSave }) {
         admin_id: currentUser?.adminID,
         event_type: currentUser?.role
     });
+
+    const [SentData , setSentData] = useState({
+        to: 'Uc1a196965ffc33b51056211b541c0836',
+        messages:[
+            {
+                type:'text',
+                text: `${currentUser?.role}`
+            }
+        ]
+    })
 
     useEffect(() => {
         if (!currentUser) {
@@ -65,7 +75,8 @@ export default function ModalCA({ onClose, onSave }) {
                 message: `ได้สร้างกิจกรรมสำเร็จแล้วในวันที่ ${formattedDate}`, // Use the formatted date
                 status: 1
             }));
-            onSave(); // ถ้าสำเร็จให้เรียก onSave() ต่อ
+            dispatch(SentMessage(SentData));
+            onSave();
         })
         .catch((error) => {
             console.error("Error creating event: ", error);

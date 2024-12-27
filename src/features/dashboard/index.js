@@ -6,7 +6,7 @@ import ModalQRCode from './Modalcreat/ModalQRCode';
 import ReactPaginate from 'react-paginate';
 import React, { useState, useEffect } from 'react';
 import { useDispatch , useSelector } from 'react-redux';
-import { getEvent , fetchCurrentUser , DeleteEvent } from '../../components/common/userSlice';
+import { getEvent , fetchCurrentUser , DeleteEvent} from '../../components/common/userSlice';
 import { format } from 'date-fns';
 import { th } from 'date-fns/locale';
 import Swal from 'sweetalert2';
@@ -43,7 +43,7 @@ function Dashboard() {
     const dispatch = useDispatch()
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const eventData = useSelector(state => state.user.getEventData); 
+    const eventData = useSelector(state => state.user.getEventData);
     const currentUser = useSelector(state => state.user.currentUser);
     const loading = useSelector(state => state.user.loading);
     const error = useSelector(state => state.user.error);
