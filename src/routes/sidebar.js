@@ -20,7 +20,6 @@ import KeyIcon from '@heroicons/react/24/outline/KeyIcon'
 import DocumentDuplicateIcon from '@heroicons/react/24/outline/DocumentDuplicateIcon'
 
 const iconClasses = `h-6 w-6`
-const submenuIconClasses = `h-5 w-5`
 
 const routes = [
   {
@@ -32,11 +31,6 @@ const routes = [
     icon: <Squares2X2Icon className={iconClasses}/>, 
     name: 'กิจกรรมทั้งหมด',
   },
-  // {
-  //   path: '/app/CreateActivities', // url
-  //   icon: <InboxArrowDownIcon className={iconClasses}/>, // icon component
-  //   name: 'สร้างกิจกรรม', // name that appear in Sidebar
-  // },
   {
     path: '/app/history', // url
     icon: <CurrencyDollarIcon className={iconClasses}/>, // icon component
@@ -65,8 +59,17 @@ const routes = [
     icon: <CalendarDaysIcon className={iconClasses}/>, // icon component
     name: 'ของรางวัล', // name that appear in Sidebar
   },
-
-  
+  {
+    path: '', // url
+    name: 'ผู้ดูแล', // name that appear in Sidebar
+    onlySuperAdmin: true,
+  },
+  {
+    path: '/app/admin', 
+    icon: <UsersIcon className={iconClasses}/>, 
+    name: 'รายชื่อผู้ดูแล',  
+    onlySuperAdmin: true,    // เพิ่ม property พิเศษ สำหรับเช็กสิทธิ์
+  },
 ]
 
 export default routes

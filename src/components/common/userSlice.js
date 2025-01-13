@@ -20,6 +20,19 @@ const GetAll ={
   specail: (page) => `${baseUrl}customer/customers?page=${page}&per_page=10&st_tpye=กยศ.`
 }
 
+const adminEndpoint = {
+  create : `${baseUrl}admin/create`,
+  getAdmin : (page)=> `${baseUrl}admin/admins/getadmin?page=${page}&per_page=10`,
+  updateA : (adminID) => `${baseUrl}admin/admins/${adminID}`,
+  DeleteA : (adminID) => `${baseUrl}admin/admins/${adminID}`
+}
+
+const rewards = {
+  createReward: `${baseUrl}admin/createReward`,
+  getreward: (page)=> `${baseUrl}admin/rewards?page=${page}&per_page=10`,
+  updateReward: (rewardID)=>`${baseUrl}admin/rewards/${rewardID}`,
+  deleteReware: (rewardID)=>`${baseUrl}admin/rewards/${rewardID}`
+}
 
 const CreateEventURL =`${baseUrl}admin/createEvent`
 const Editeventinfo = (eventID) => `${baseUrl}events/event/${eventID}/edit`;
@@ -27,6 +40,226 @@ const DeleteEventdata = (eventID) => `${baseUrl}events/event/${eventID}/delete`;
 
 //Line OA 
 const LineMessageurl = `${baseUrl}admin/sendMessage`;
+
+//admin create
+export const createAdmin = createAsyncThunk("user/createAdmins", 
+  async ({ formData }, { rejectWithValue, getState }) => {
+    const token = getState().user.userToken;
+
+    if (!token) {
+      return rejectWithValue("Token or role not found!");
+    }
+
+    const url = adminEndpoint.create;
+
+    try {
+
+      const response = await axios.post(url , formData , {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+});
+
+//admin update
+export const updateadmin = createAsyncThunk(
+  "user/updateadmins",
+  async ({ adminID, formData }, { getState, rejectWithValue }) => {
+    const token = getState().user.userToken;
+
+    if (!token) {
+      return rejectWithValue("Token or role not found!");
+    }
+    
+    const url = adminEndpoint.updateA;
+    
+    try {
+      const response = await axios.put(url(adminID , formData), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        console.error("Error data:", error.response.data);
+        console.error("Error status:", error.response.status);
+        return rejectWithValue(error.response.data);
+      } else {
+        console.error("Network error:", error.message);
+        return rejectWithValue("Network error occurred");
+      }
+    }
+  }
+);
+
+//delete admin
+export const Deleteadmin = createAsyncThunk(
+  "users/Deleteadmins",
+  async ({ adminID }, { getState, rejectWithValue }) => {
+    const token = getState().user.userToken;
+    if (!token) {
+      return rejectWithValue("Token not found!");
+    }
+    try {
+      const response = await axios.delete(adminEndpoint.DeleteA(adminID), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  }
+);
+
+
+//get admin
+export const getAdmin = createAsyncThunk(
+  "user/getAdmins",
+  async (page = 1, { getState, rejectWithValue }) => {
+    const token = getState().user.userToken;
+    if (!token) {
+      return rejectWithValue("Token not found!");
+    }
+
+    try {
+      const response = await axios.get(adminEndpoint.getAdmin(page), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  }
+);
+
+
+//Reward create
+export const createReward = createAsyncThunk("user/createRewards", 
+  async ({ formData }, { rejectWithValue, getState }) => {
+    const token = getState().user.userToken;
+
+    if (!token) {
+      return rejectWithValue("Token or role not found!");
+    }
+
+    const url = rewards.createReward;
+
+    try {
+
+      const response = await axios.post(url , formData , {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+});
+
+//Reward update
+export const updateReward = createAsyncThunk(
+  "user/updateRewards",
+  async ({ rewardID, formData }, { getState, rejectWithValue }) => {
+    const token = getState().user.userToken;
+
+    if (!token) {
+      return rejectWithValue("Token or role not found!");
+    }
+    
+    const url = rewards.updateReward;
+    
+    try {
+      const response = await axios.put(url(rewardID , formData), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        console.error("Error data:", error.response.data);
+        console.error("Error status:", error.response.status);
+        return rejectWithValue(error.response.data);
+      } else {
+        console.error("Network error:", error.message);
+        return rejectWithValue("Network error occurred");
+      }
+    }
+  }
+);
+
+//delete Reward
+export const DeleteReward = createAsyncThunk(
+  "users/DeleteRewards",
+  async ({ rewardID }, { getState, rejectWithValue }) => {
+    const token = getState().user.userToken;
+    if (!token) {
+      return rejectWithValue("Token not found!");
+    }
+    try {
+      const response = await axios.delete(rewards.deleteReware(rewardID), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  }
+);
+
+
+//get Reward
+export const getReward = createAsyncThunk(
+  "user/getRewards",
+  async (page = 1, { getState, rejectWithValue }) => {
+    const token = getState().user.userToken;
+    if (!token) {
+      return rejectWithValue("Token not found!");
+    }
+
+    try {
+      const response = await axios.get(rewards.getreward(page), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  }
+);
 
 export const SentMessage = createAsyncThunk(
   "users/SentMessages",
@@ -317,6 +550,7 @@ const userSlice = createSlice({
     currentUser: null,
     userToken: localStorage.getItem("userToken") || null,
     getEventData: { data: [], meta: {} },
+    getRewardData: { data: [], meta: {} },
     getNormalsData: { data: [], meta: {} },
     getSpecailsData: { data: [], meta: {} },
     getEventDetailsData: { data: [], meta: {} },
@@ -357,6 +591,10 @@ const userSlice = createSlice({
             state.response = action.payload;
           } else if (action.type.includes("fetchUser")) {
             state.currentUser = action.payload;
+          } else if (action.type.includes("getRewards")) {
+            state.getRewardData = action.payload;
+          } else if (action.type.includes("getAdmins")) {
+            state.getAdminData = action.payload;
           } else if (action.type.includes("getEvents")) {
             state.getEventData = action.payload;
           } else if (action.type.includes("getNormals")) {
@@ -369,6 +607,16 @@ const userSlice = createSlice({
             state.users.push(action.payload);
           } else if (action.type.includes("SentMessages")) {
             state.users.push(action.payload);
+          } else if (action.type.includes("createAdmins")) {
+            state.users.push(action.payload);
+          } else if (action.type.includes("updateadmins")) {
+            state.users.push(action.payload);
+          } else if (action.type.includes("updateRewards")) {
+            state.users.push(action.payload);
+          } else if (action.type.includes("Deleteadmins")) {
+            state.users = state.users.filter(user => user.id !== action.payload.id);
+          } else if (action.type.includes("DeleteRewards")) {
+            state.users = state.users.filter(user => user.id !== action.payload.id);
           } else if (action.type.includes("loginUser")) {
             state.currentUser = action.payload.user;
             state.userToken = action.payload.token;

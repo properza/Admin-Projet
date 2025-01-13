@@ -10,7 +10,7 @@ function DocComponents(){
     const dispatch = useDispatch()
 
     useEffect(() => {
-        dispatch(setPageTitle({ title : "รางวัล"}))
+        dispatch(setPageTitle({ title : "ของรางวัล"}))
       }, [])
 
 

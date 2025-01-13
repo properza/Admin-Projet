@@ -14,6 +14,10 @@ function InternalPage(){
     const error = useSelector(state => state.user.error);
 
     useEffect(() => {
+        dispatch(setPageTitle({ title : "รายชื่อนักศึกษา ทั่วไป"}))
+      }, [])
+
+    useEffect(() => {
         dispatch(getNormal(currentPage))
       }, [dispatch])
 

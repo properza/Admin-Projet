@@ -7,7 +7,7 @@ function InternalPage(){
     const dispatch = useDispatch()
 
     useEffect(() => {
-        dispatch(setPageTitle({ title : "สร้างกิจกรรม"}))
+        dispatch(setPageTitle({ title : "ผู้ดูแล"}))
       }, [])
 
 
