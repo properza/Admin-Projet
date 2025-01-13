@@ -12,8 +12,6 @@ function RewardModal({
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
-    // ถ้าเป็น checkbox => ใช้ checked
-    // ถ้าเป็น text / number => ใช้ value
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value

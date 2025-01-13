@@ -29,9 +29,9 @@ const adminEndpoint = {
 
 const rewards = {
   createReward: `${baseUrl}admin/createReward`,
-  getreward: (page)=> `${baseUrl}admin/rewards?page=${page}&per_page=10`,
-  updateReward: (rewardID)=>`${baseUrl}admin/rewards/${rewardID}`,
-  deleteReware: (rewardID)=>`${baseUrl}admin/rewards/${rewardID}`
+  getreward: (page) => `${baseUrl}admin/rewards?page=${page}&per_page=10`,
+  updateReward: (rewardID) => `${baseUrl}admin/rewards/${rewardID}`,
+  deleteReware: (rewardID) => `${baseUrl}admin/rewards/${rewardID}`
 }
 
 const CreateEventURL =`${baseUrl}admin/createEvent`
@@ -184,14 +184,16 @@ export const updateReward = createAsyncThunk(
   async ({ rewardID, formData }, { getState, rejectWithValue }) => {
     const token = getState().user.userToken;
 
+    console.log("Retrieved token:", token);
+
     if (!token) {
       return rejectWithValue("Token or role not found!");
     }
     
-    const url = rewards.updateReward;
-    
+    const url = rewards.updateReward(rewardID);
+
     try {
-      const response = await axios.put(url(rewardID , formData), {
+      const response = await axios.put(url, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -548,7 +550,7 @@ const userSlice = createSlice({
     loading: false,
     error: null,
     currentUser: null,
-    userToken: localStorage.getItem("userToken") || null,
+    userToken: null,
     getEventData: { data: [], meta: {} },
     getRewardData: { data: [], meta: {} },
     getNormalsData: { data: [], meta: {} },
