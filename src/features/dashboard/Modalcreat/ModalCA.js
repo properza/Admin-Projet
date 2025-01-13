@@ -6,7 +6,7 @@ import './leaflet.css';
 import './ModalCA.css';
 import InputText from '../../../components/Input/InputText';
 import SelectBox from '../../../components/Input/SelectBox';
-import { fetchCurrentUser, createEvent , SentMessage } from '../../../components/common/userSlice';
+import { fetchCurrentUser, createEvent, SentMessage } from '../../../components/common/userSlice';
 import Swal from 'sweetalert2';
 import { format } from 'date-fns';
 import { th } from 'date-fns/locale';
@@ -27,9 +27,8 @@ export default function ModalCA({ onClose, onSave }) {
         longitude: null,
         province: '',
         admin_id: currentUser?.adminID,
-        event_type: currentUser?.role
+        event_type: '' // กำหนดเป็นค่าว่างเริ่มต้น
     });
-
 
     useEffect(() => {
         if (!currentUser) {
@@ -38,7 +37,7 @@ export default function ModalCA({ onClose, onSave }) {
             setFormValues((prevState) => ({
                 ...prevState,
                 admin_id: currentUser.adminID,
-                event_type: currentUser.role,
+                event_type: currentUser.role !== 'super_admin' ? currentUser.role : '' // ถ้าไม่ใช่ super_admin กำหนด event_type จากบทบาท
             }));
         }
     }, [dispatch, currentUser]);
@@ -52,14 +51,24 @@ export default function ModalCA({ onClose, onSave }) {
             console.error("Admin ID is missing");
             return;
         }
-    
+
+        // สำหรับ super_admin ให้ตรวจสอบว่าได้เลือก event_type แล้ว
+        if (currentUser?.role === 'super_admin' && !formValues.event_type) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'เลือกประเภทกิจกรรม',
+                text: 'กรุณาเลือกประเภทกิจกรรม (ทั่วไป หรือ กยศ.)',
+            });
+            return;
+        }
+
         const currentDate = new Date();
         const formattedDate = currentDate.toLocaleDateString('th-TH', {
             day: 'numeric',
             month: 'long',
             year: 'numeric',
         });
-    
+
         const startDate = formValues.startDate 
             ? format(new Date(formValues.startDate), "d MMM yyyy", { locale: th }) 
             : 'วันที่ไม่ถูกต้อง';
@@ -69,9 +78,9 @@ export default function ModalCA({ onClose, onSave }) {
         const endTime = formValues.endTime 
             ? format(new Date(`1970-01-01T${formValues.endTime}:00`), "HH:mm", { locale: th }) 
             : 'เวลาไม่ถูกต้อง';
-    
-        const messageText = `เชิญชวน นศ. ${currentUser?.role === 'special' ? 'กยศ.' : 'ทั่วไป'} เข้าร่วม ${formValues.activityName} ที่จะจัดขึ้นในวันที่ ${startDate} เวลา ${startTime} - ${endTime} ณ ${formValues.Nameplace}`;
-    
+
+        const messageText = `เชิญชวน นศ. ${formValues.event_type === 'special' ? 'กยศ.' : 'ทั่วไป'} เข้าร่วม ${formValues.activityName} ที่จะจัดขึ้นในวันที่ ${startDate} เวลา ${startTime} - ${endTime} ณ ${formValues.Nameplace}`;
+
         const updatedSentData = {
             to: 'Uc1a196965ffc33b51056211b541c0836',
             messages: [
@@ -81,7 +90,7 @@ export default function ModalCA({ onClose, onSave }) {
                 }
             ]
         };
-    
+
         dispatch(createEvent(formValues))
             .unwrap()
             .then((res) => {
@@ -237,7 +246,21 @@ export default function ModalCA({ onClose, onSave }) {
                             updateFormValue={handleUpdateFormValue}
                             updateType="endTime"
                         />
+                        {currentUser?.role === 'super_admin' && (
+                            <SelectBox
+                                labelTitle={'ประเภทกิจกรรม'}
+                                placeholder={'กรุณาเลือกประเภทกิจกรรม'}
+                                options={[
+                                    { value: '', name: 'ประเภท' },
+                                    { value: 'normal', name: 'ทั่วไป' },
+                                    { value: 'special', name: 'กยศ.' }
+                                ]}
+                                updateFormValue={handleUpdateFormValue}
+                                updateType='event_type'
+                            />
+                        )}
                     </div>
+                    
                     <InputText
                         labelTitle={'ชื่อสถานที่จัดกิจกรรม'}
                         type={'text'}

@@ -550,7 +550,7 @@ const userSlice = createSlice({
     loading: false,
     error: null,
     currentUser: null,
-    userToken: null,
+    userToken: localStorage.getItem("userToken") || null,
     getEventData: { data: [], meta: {} },
     getRewardData: { data: [], meta: {} },
     getNormalsData: { data: [], meta: {} },
