@@ -35,7 +35,7 @@ function InternalPage(){
             }
     
             if (!eventData || !eventData.data || eventData.data.length === 0) {
-                return <tr><td colSpan="9">ยังไม่มีข้อมูลกิจกรรม</td></tr>;
+                return <tr><td colSpan="9">ยังไม่มีข้อมูลนักศึกษา</td></tr>;
             }
     
             return eventData.data.map((data, index) => (

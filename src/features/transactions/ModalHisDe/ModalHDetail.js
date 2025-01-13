@@ -59,10 +59,33 @@ export default function ModalHDetail({ onClose , eventID }) {
             <div className="modal-container">
                 <div className="modal-header">
                     รายละเอียด
-                    <div className="my-2 grid grid-cols-2 text-[1rem] justify-center text-left ">
-                        <p className='text-black font-normal'>กิจกรรม : {eventDataDe.data.activityName}</p>
-                        <p className='text-black font-normal'>หลักสูตร : {eventDataDe.data.course}</p>
-                        <p className='text-black font-normal'>วันที่ได้เริ่มต้น : {eventDataDe?.data?.startDate ? format(new Date(eventDataDe?.data?.startDate), "d MMM yyyy", { locale: th }) : '-'}</p>
+                    <div className="my-2 grid grid-cols-2 text-[1rem] justify-center text-left gap-2">
+                        <label className='text-black font-normal'>กิจกรรม 
+                            <div className="border border-gray-300 p-1 rounded-md">
+                                {eventDataDe.data.activityName}
+                            </div>
+                        </label>
+                        <label className='text-black font-normal'>
+                            หลักสูตร 
+                            <div className="border border-gray-300 p-1 rounded-md">
+                                {eventDataDe.data.course}
+                            </div>
+                        </label>
+                        <label className='text-black font-normal grid'> วันที่ได้เริ่มต้น - วันที่สิ้นสุด 
+                            <div className="flex gap-2 border border-gray-300 p-1 rounded-md">
+                                {eventDataDe?.data?.startDate ? format(new Date(eventDataDe?.data?.startDate), "d MMM yyyy", { locale: th }) : '-'} - {eventDataDe?.data?.endDate ? format(new Date(eventDataDe?.data?.endDate), "d MMM yyyy", { locale: th }) : '-'}
+                            </div>
+                        </label>
+                        <label className='text-black font-normal grid'> สถานที่จัดกิจกรรม
+                            <div className="flex gap-2 border border-gray-300 p-1 rounded-md">
+                                {eventDataDe?.data?.Nameplace}
+                            </div>
+                        </label>
+                        <label className='text-black font-normal grid'> เวลาที่เริ่ม - เวลาที่สิ้นสุด 
+                            <div className="flex gap-2 border border-gray-300 p-1 rounded-md">
+                                {eventDataDe?.data?.startTime} - {eventDataDe?.data?.endTime}
+                            </div>
+                        </label>
                     </div>
                 </div>
                 <div className="modal-body ">
