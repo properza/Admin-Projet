@@ -76,14 +76,14 @@
   /* Large screen (desktops) */
   @media (min-width: 1024px) {
     .modal-container {
-      max-width: 600px;
+      max-width: 850px;
     }
   }
   
   /* Medium screen (tablets) */
   @media (min-width: 768px) and (max-width: 1023px) {
     .modal-container {
-      max-width: 80%;
+      max-width: 85%;
       padding: 15px;
     }
     .modal-header {

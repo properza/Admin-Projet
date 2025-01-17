@@ -50,6 +50,18 @@ export default function ModalHDetail({ onClose , eventID }) {
                 <td>
                     {data?.branch_st}
                 </td>
+                <td>
+                    <span
+                        style={{
+                            backgroundColor: data?.status === 'กำลังเข้าร่วม' ? 'orange' : 'green',
+                            color: '#fff',
+                            padding: '4px 8px',
+                            borderRadius: '6px'
+                        }}
+                    >
+                        {data?.status}
+                    </span>
+                </td>
             </tr>
         ));
     };
@@ -101,6 +113,7 @@ export default function ModalHDetail({ onClose , eventID }) {
                                 <th>ชื่อ - นามสกุล</th>
                                 <th>คณะ</th>
                                 <th>สาขา</th>
+                                <th>สถานะ</th>
                             </tr>
                         </thead>
                         <tbody>
