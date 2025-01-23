@@ -102,7 +102,7 @@ export default function ModalHDetail({ onClose , eventID }) {
                 </div>
                 <div className="modal-body ">
                 <div className="grid justify-start">
-                    <p>ทั้งหมด {eventDataDe?.meta?.total} รายการ</p>
+                    <p>ทั้งหมด {eventDataDe?.data?.listST?.length} รายการ</p>
                 </div>
                 <div className="overflow-y-auto h-[50vh]">
                     <table className='table text-center'>

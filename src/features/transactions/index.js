@@ -155,6 +155,7 @@ function Transactions(){
                         <td>{index + 1}</td>
                         <td>{data.id}</td>
                         <td>{data.activityName ?? '-' }</td>
+                        {currentUser?.role === 'super_admin' && <td> <p className={`badge-ghost rounded-md p-1 ${data.event_type === 'normal' ? 'bg-green-300' : 'bg-orange-300'}`}>{data.event_type === 'normal' ? 'ทั่วไป' : 'กยศ.'}</p> </td>}
                         <td>
                             {data.created_at ? 
                                 format(new Date(data.created_at), "d MMM yyyy", { locale: th })
@@ -200,6 +201,7 @@ function Transactions(){
                             <th>No.</th>
                             <th>รหัสกิจกรรม</th>
                             <th>กิจกรรม</th>
+                            {currentUser?.role === 'super_admin' && <th>ประเภท</th>}
                             <th>วันที่อัปเดตล่าสุด</th>
                             <th>จัดการ</th>
                             <th>QR Code</th>

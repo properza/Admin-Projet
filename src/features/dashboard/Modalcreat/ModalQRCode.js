@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { QRCodeSVG } from 'qrcode.react'; // Updated import
 import Swal from 'sweetalert2';
-
+// https://customer-new.vercel.app/
 const ModalQRCode = ({ onClose, eventID, userDetails }) => {
     const qrUrl = `https://customer-new.vercel.app/?referral=${eventID}`;
     const svgRef = useRef(null);

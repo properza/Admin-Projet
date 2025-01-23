@@ -45,7 +45,7 @@ export default function ModalEditinfo({ onClose, onSave, userDetails, eventID })
             setFormValues(prevState => ({
                 ...prevState,
                 admin_id: currentUser.adminID,
-                event_type: currentUser.role,
+                event_type: currentUser.role === 'super_admin' ? userDetails?.event_type : currentUser.role,
             }));
         }
     }, [dispatch, currentUser]);

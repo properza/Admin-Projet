@@ -6,7 +6,7 @@ import './leaflet.css';
 import './ModalCA.css';
 import InputText from '../../../components/Input/InputText';
 import SelectBox from '../../../components/Input/SelectBox';
-import { fetchCurrentUser, createEvent, SentMessage } from '../../../components/common/userSlice';
+import { fetchCurrentUser, createEvent, SentMessage, getNormal , getSpecail } from '../../../components/common/userSlice';
 import Swal from 'sweetalert2';
 import { format } from 'date-fns';
 import { th } from 'date-fns/locale';
@@ -14,6 +14,21 @@ import { th } from 'date-fns/locale';
 export default function ModalCA({ onClose, onSave }) {
     const dispatch = useDispatch();
     const currentUser = useSelector(state => state.user.currentUser);
+    const specialDataRaw = useSelector(state => state.user.getSpecailsData);
+    const normalDataRaw = useSelector(state => state.user.getNormalsData);
+
+    const specialUsers = specialDataRaw?.data?.map(item => ({
+        lineUserId: item.customer_id,
+        name: item.name,
+        stType: item.st_tpye
+      })) || [];
+    
+      const normalUsers = normalDataRaw?.data?.map(item => ({
+        lineUserId: item.customer_id,
+        name: item.name,
+        stType: item.st_tpye
+      })) || [];
+
     const [isMapVisible, setIsMapVisible] = useState(false);
     const [formValues, setFormValues] = useState({
         activityName: '',
@@ -29,6 +44,11 @@ export default function ModalCA({ onClose, onSave }) {
         admin_id: currentUser?.adminID,
         event_type: '' // กำหนดเป็นค่าว่างเริ่มต้น
     });
+
+    useEffect(()=>{
+        dispatch(getSpecail())
+        dispatch(getNormal())
+    },[dispatch])
 
     useEffect(() => {
         if (!currentUser) {
@@ -46,73 +66,88 @@ export default function ModalCA({ onClose, onSave }) {
         setIsMapVisible(prev => !prev);
     };
 
-    const handleSave = () => {
-        if (!formValues.admin_id) {
+    const handleSave = async () => {
+        try {
+          if (!formValues.admin_id) {
             console.error("Admin ID is missing");
             return;
-        }
-
-        // สำหรับ super_admin ให้ตรวจสอบว่าได้เลือก event_type แล้ว
-        if (currentUser?.role === 'super_admin' && !formValues.event_type) {
+          }
+    
+          // ถ้าเป็น super_admin แต่ยังไม่เลือก event_type
+          if (currentUser?.role === 'super_admin' && !formValues.event_type) {
             Swal.fire({
-                icon: 'warning',
-                title: 'เลือกประเภทกิจกรรม',
-                text: 'กรุณาเลือกประเภทกิจกรรม (ทั่วไป หรือ กยศ.)',
+              icon: 'warning',
+              title: 'เลือกประเภทกิจกรรม',
+              text: 'กรุณาเลือกประเภทกิจกรรม (ทั่วไป หรือ กยศ.)',
             });
             return;
-        }
-
-        const currentDate = new Date();
-        const formattedDate = currentDate.toLocaleDateString('th-TH', {
+          }
+    
+          // สร้างรูปแบบข้อความ
+          const startDateFormatted = formValues.startDate
+            ? format(new Date(formValues.startDate), "d MMM yyyy", { locale: th })
+            : "วันที่ไม่ถูกต้อง";
+          const startTimeFormatted = formValues.startTime
+            ? format(new Date(`1970-01-01T${formValues.startTime}:00`), "HH:mm", { locale: th })
+            : "เวลาไม่ถูกต้อง";
+          const endTimeFormatted = formValues.endTime
+            ? format(new Date(`1970-01-01T${formValues.endTime}:00`), "HH:mm", { locale: th })
+            : "เวลาไม่ถูกต้อง";
+    
+          const messageText = `
+            เชิญชวน นศ. ${formValues.event_type === 'special' ? 'กยศ.' : 'ทั่วไป'}
+            เข้าร่วม ${formValues.activityName}
+            จัดขึ้นในวันที่ ${startDateFormatted}
+            เวลา ${startTimeFormatted} - ${endTimeFormatted}
+            ณ ${formValues.Nameplace}
+          `.trim();
+    
+          // 1) เรียก createEvent
+          const createdResult = await dispatch(createEvent(formValues)).unwrap();
+          console.log("สร้างกิจกรรมเสร็จ:", createdResult);
+    
+          // 2) แจ้งเตือนว่ากิจกรรมสร้างสำเร็จ
+          const currentDate = new Date().toLocaleDateString('th-TH', {
             day: 'numeric',
             month: 'long',
-            year: 'numeric',
-        });
-
-        const startDate = formValues.startDate 
-            ? format(new Date(formValues.startDate), "d MMM yyyy", { locale: th }) 
-            : 'วันที่ไม่ถูกต้อง';
-        const startTime = formValues.startTime 
-            ? format(new Date(`1970-01-01T${formValues.startTime}:00`), "HH:mm", { locale: th }) 
-            : 'เวลาไม่ถูกต้อง';
-        const endTime = formValues.endTime 
-            ? format(new Date(`1970-01-01T${formValues.endTime}:00`), "HH:mm", { locale: th }) 
-            : 'เวลาไม่ถูกต้อง';
-
-        const messageText = `เชิญชวน นศ. ${formValues.event_type === 'special' ? 'กยศ.' : 'ทั่วไป'} เข้าร่วม ${formValues.activityName} ที่จะจัดขึ้นในวันที่ ${startDate} เวลา ${startTime} - ${endTime} ณ ${formValues.Nameplace}`;
-
-        const updatedSentData = {
-            to: 'Uc1a196965ffc33b51056211b541c0836',
-            messages: [
+            year: 'numeric'
+          });
+          dispatch(showNotification({
+            message: `ได้สร้างกิจกรรมสำเร็จแล้วในวันที่ ${currentDate}`,
+            status: 1
+          }));
+    
+          // 3) เลือกกลุ่มผู้ใช้
+          const isSpecial = (formValues.event_type === 'special');
+          const targetUsers = isSpecial ? specialUsers : normalUsers;
+    
+          // 4) ส่งข้อความให้ทีละคน
+          const promises = targetUsers.map(user => {
+            const updatedSentData = {
+              to: user.lineUserId,
+              messages: [
                 {
-                    type: 'text',
-                    text: messageText
+                  type: 'text',
+                  text: messageText
                 }
-            ]
-        };
-
-        dispatch(createEvent(formValues))
-            .unwrap()
-            .then((res) => {
-                console.log(res);
-                dispatch(showNotification({
-                    message: `ได้สร้างกิจกรรมสำเร็จแล้วในวันที่ ${formattedDate}`,
-                    status: 1
-                }));
-                return dispatch(SentMessage(updatedSentData));
-            })
-            .then(() => {
-                onSave();
-            })
-            .catch((error) => {
-                console.error("Error creating event: ", error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'สร้างกิจกรรมไม่สำเร็จ',
-                    text: 'กรุณากรอกข้อมูลให้ครบ',
-                });
-            });
-    };
+              ]
+            };
+            return dispatch(SentMessage(updatedSentData));
+          });
+    
+          await Promise.all(promises);
+    
+          // สุดท้ายปิด modal
+          onSave();
+        } catch (err) {
+          console.error("Error creating event or sending messages:", err);
+          Swal.fire({
+            icon: 'error',
+            title: 'สร้างกิจกรรมไม่สำเร็จ',
+            text: 'กรุณากรอกข้อมูลให้ครบ หรือ ตรวจสอบการส่งข้อความอีกครั้ง'
+          });
+        }
+      };
 
     const courses = [
         { value: 'ปวช.', name: 'ปวช.' },
