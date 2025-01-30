@@ -41,7 +41,7 @@ function LeftSidebar() {
                 <div className="grid gap-3 border-b border-b-black pb-2 justify-center items-center gap-x-6">
                     <img className="h-26 w-26 rounded-full" src="https://via.placeholder.com/100" alt="" />
                     {/*  */}
-                    <p className='text-center text-[1rem] font-semibold'>แอดมิน ( {roleSelect} )</p>
+                    <p className='text-center text-[1rem] font-semibold'>ผู้ดูแล ( {roleSelect} )</p>
                 </div>
                 {
                     routes.map((route, k) => {

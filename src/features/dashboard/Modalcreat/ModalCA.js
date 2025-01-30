@@ -150,6 +150,7 @@ export default function ModalCA({ onClose, onSave }) {
       };
 
     const courses = [
+        { value: 'ทุกระดับการศึกษา', name: 'ทุกระดับการศึกษา' },
         { value: 'ปวช.', name: 'ปวช.' },
         { value: 'ปวส', name: 'ปวส.' },
         { value: 'ป.ตรี', name: 'ป.ตรี' }
@@ -247,8 +248,8 @@ export default function ModalCA({ onClose, onSave }) {
                             updateType="activityName"
                         />
                         <SelectBox
-                            labelTitle={'หลักสูตร'}
-                            placeholder={'กรุณาเลือกหลักสูตร'}
+                            labelTitle={'ระดับการศึกษา'}
+                            placeholder={'กรุณาเลือกระดับการศึกษา'}
                             options={courses}
                             updateFormValue={handleUpdateFormValue}
                             updateType='course'

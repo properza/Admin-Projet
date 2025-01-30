@@ -96,6 +96,7 @@ export default function ModalEditinfo({ onClose, onSave, userDetails, eventID })
     };
 
     const courses = [
+        { value: 'ทุกระดับการศึกษา', name: 'ทุกระดับการศึกษา' },
         { value: 'ปวช.', name: 'ปวช.' },
         { value: 'ปวส', name: 'ปวส.' },
         { value: 'ป.ตรี', name: 'ป.ตรี' }
@@ -197,9 +198,10 @@ export default function ModalEditinfo({ onClose, onSave, userDetails, eventID })
                             updateType="activityName"
                         />
                         <SelectBox
-                            labelTitle={'หลักสูตร'}
-                            placeholder={userDetails?.course ?? 'ไม่ระบุ'}
+                            labelTitle={'ระดับการศึกษา'}
+                            placeholder={'เลือกระดับการศึกษา'}
                             options={courses}
+                            value={formValues.course}
                             updateFormValue={handleUpdateFormValue}
                             updateType='course'
                         />
