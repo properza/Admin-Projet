@@ -9,7 +9,7 @@ function RewardModal({
   onSubmit
 }) {
   if (!isOpen) return null
-  console.log(formData.images);
+  console.log(formData);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -83,6 +83,7 @@ function RewardModal({
 
           <div>
             <label className="label">เพิ่มรูปของรางวัล (rewardUrl)</label>
+            {/* <img src={formData.images} className="w-[150px] h-[150px]" alt="" /> */}
             <input
               type="file"
               name="images"

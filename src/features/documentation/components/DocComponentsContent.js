@@ -101,7 +101,7 @@ function DocComponentsContent() {
             reward_name: data.reward_name || '',
             points_required: data.points_required || 0,
             amount: data.amount || 0,
-            images: [], // Clear previous images when editing
+            images:data.rewardUrl[0] || [], // Clear previous images when editing
             can_redeem: data.can_redeem || false,
             id: data.id, 
         });
