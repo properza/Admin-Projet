@@ -9,15 +9,29 @@ function RewardModal({
   onSubmit
 }) {
   if (!isOpen) return null
+  console.log(formData.images);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value
-    }))
-  }
-
+    const { name, value, type, checked } = e.target;
+    if (type === "file") {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: Array.from(e.target.files)
+      }));
+    } else if (type === "checkbox") {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: checked
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value
+      }));
+    }
+  };
+  
+  
   const handleSubmit = (e) => {
     e.preventDefault()
     onSubmit()
@@ -68,22 +82,17 @@ function RewardModal({
           </div>
 
           <div>
-            <label className="label">ลิงก์รูปของรางวัล (rewardUrl)</label>
+            <label className="label">เพิ่มรูปของรางวัล (rewardUrl)</label>
             <input
-              type="text"
-              name="rewardUrl"
+              type="file"
+              name="images"
               className="input input-bordered w-full"
-              value={formData.rewardUrl || ""}
               onChange={handleChange}
+              multiple
               required
             />
           </div>
 
-          {/* 
-            can_redeem: true / false 
-            หากต้องการให้ผู้ใช้เลือกเปิด/ปิดได้เฉพาะตอนแก้ไข
-            (หรือจะให้เลือกได้ตลอดก็ได้) 
-          */}
           {isEditMode && (
             <div className="flex items-center space-x-2 mt-2">
               <input

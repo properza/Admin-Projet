@@ -38,24 +38,37 @@ function InternalPage(){
                 return <tr><td colSpan="9">ยังไม่มีข้อมูลนักศึกษา</td></tr>;
             }
     
-            return eventData.data.map((data, index) => (
-                <tr key={data.id}>
-                    <td>{index + 1}</td>
-                    <td>{data.user_code}</td>
-                    <td>
-                        <p>{data.first_name} {data.last_name}</p>
-                    </td>
-                    <td>
-                        {data?.group_st}
-                    </td>
-                    <td>
-                        {data?.branch_st}
-                    </td>
-                    <td>
-                        {data?.total_point ?? '0'}
-                    </td>
-                </tr>
-            ));
+            return eventData.data.map((data, index) => {
+                const totalPoints = data?.total_point ?? 0;
+                const totalMinutes = totalPoints * 6; // 1 คะแนน = 6 นาที
+                const hours = Math.floor(totalMinutes / 60); // จำนวนชั่วโมง
+                const minutes = totalMinutes % 60; // จำนวนนาที
+        
+                // แสดงผลในรูปแบบ "X ชั่วโมง Y นาที"
+                const timeDisplay = `${hours} ชม ${minutes} นาที`;
+        
+                return (
+                    <tr key={data.id}>
+                        <td>{index + 1}</td>
+                        <td>{data.user_code}</td>
+                        <td>
+                            <p>{data.first_name} {data.last_name}</p>
+                        </td>
+                        <td>
+                            {data?.group_st}
+                        </td>
+                        <td>
+                            {data?.branch_st}
+                        </td>
+                        <td>
+                            {data?.total_point ?? '0'}
+                        </td>
+                        <td>
+                            {timeDisplay}
+                        </td>
+                    </tr>
+                );
+            });
         };
     
     return(
@@ -69,6 +82,7 @@ function InternalPage(){
                             <th>คณะ</th>
                             <th>สาขา</th>
                             <th>คะแนน</th>
+                            <th>เวลาที่เข้าร่วม</th>
                         </tr>
                     </thead>
                     <tbody>

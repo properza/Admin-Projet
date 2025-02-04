@@ -78,9 +78,9 @@ export default function ModalHDetail({ onClose , eventID }) {
                             </div>
                         </label>
                         <label className='text-black font-normal'>
-                            หลักสูตร 
+                            ระดับการศึกษา 
                             <div className="border border-gray-300 p-1 rounded-md">
-                                {eventDataDe.data.course}
+                                {eventDataDe.data.course || 'ไม่ระบุ'}
                             </div>
                         </label>
                         <label className='text-black font-normal grid'> วันที่ได้เริ่มต้น - วันที่สิ้นสุด 

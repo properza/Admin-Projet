@@ -210,6 +210,7 @@ function Leads() {
               <td>{index + 1}</td>
               <td>{data.id}</td>
               <td>{data.username}</td>
+              <td><p>{data.firstname} {data.lastname}</p></td>
               <td>{data.role === 'normal' ? 'ทั่วไป' : 'กยศ.'}</td>
               <td>
                 <div className="flex gap-4">
@@ -252,6 +253,7 @@ function Leads() {
                   <th>ลำดับ</th>
                   <th>รหัสผู้ดูแล</th>
                   <th>ชื่อผู้ใช้</th>
+                  <th>ชื่อ - นามสกุล</th>
                   <th>ตำแหน่ง</th>
                   <th>จัดการ</th>
                 </tr>

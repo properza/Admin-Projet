@@ -29,14 +29,14 @@ export default function ModalEditinfo({ onClose, onSave, userDetails, eventID })
         startTime: formattedStartTime,
         endTime: formattedEndTime,
         Nameplace: userDetails?.Nameplace || '',
-        latitude: userDetails?.latitude ? parseFloat(userDetails.latitude) : null,
-        longitude: userDetails?.longitude ? parseFloat(userDetails.longitude) : null,
+        latitude: parseFloat(userDetails.latitude) || '',
+        longitude: parseFloat(userDetails.longitude) || '',
         province: userDetails?.province || '',
         admin_id: currentUser?.adminID || null,
         event_type: currentUser?.role || ''
     });
 
-    console.log(userDetails);
+    console.log(formValues);
 
     useEffect(() => {
         if (!currentUser) {
@@ -50,6 +50,7 @@ export default function ModalEditinfo({ onClose, onSave, userDetails, eventID })
         }
     }, [dispatch, currentUser]);
 
+
     const toggleMapVisibility = () => {
         setIsMapVisible(prev => !prev);
     };
@@ -59,6 +60,27 @@ export default function ModalEditinfo({ onClose, onSave, userDetails, eventID })
             console.error("Admin ID is missing");
             return;
         }
+
+        // ตรวจสอบว่า endDate น้อยกว่า startDate หรือไม่
+        if (formValues.endDate && new Date(formValues.endDate) < new Date(formValues.startDate)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'กรุณาเลือกวันที่สิ้นสุดให้ถูกต้อง',
+                text: 'วันที่สิ้นสุดต้องมากกว่าหรือเท่ากับวันที่เริ่มต้น',
+            });
+            return;
+        }
+
+        // ตรวจสอบว่า endTime น้อยกว่า startTime หรือไม่
+        if (formValues.endTime && formValues.endTime < formValues.startTime) {
+            Swal.fire({
+                icon: 'error',
+                title: 'กรุณาเลือกเวลาที่สิ้นสุดให้ถูกต้อง',
+                text: 'เวลาที่สิ้นสุดต้องมากกว่าหรือเท่ากับเวลาที่เริ่มต้น',
+            });
+            return;
+        }
+
         const currentDate = new Date();
 
         const formattedDate = currentDate.toLocaleDateString('th-TH', {
@@ -95,6 +117,7 @@ export default function ModalEditinfo({ onClose, onSave, userDetails, eventID })
             });
     };
 
+
     const courses = [
         { value: 'ทุกระดับการศึกษา', name: 'ทุกระดับการศึกษา' },
         { value: 'ปวช.', name: 'ปวช.' },
@@ -110,77 +133,84 @@ export default function ModalEditinfo({ onClose, onSave, userDetails, eventID })
     };
 
     useEffect(() => {
-            // Get user's current position
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition((position) => {
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-                    setFormValues(prevState => ({
-                        ...prevState,
-                        latitude: lat,
-                        longitude: lng
-                    }));
-                    getProvinceName(lat, lng);
-                }, (error) => {
-                    console.error("Error obtaining location: ", error);
-                    const defaultLat = userDetails?.latitude ? parseFloat(userDetails.latitude, 10) : null;
-                    const defaultLng = userDetails?.longitude ? parseFloat(userDetails.longitude, 10) : null;
-                    setFormValues(prevState => ({
-                        ...prevState,
-                        latitude: defaultLat,
-                        longitude: defaultLng
-                    }));
-                    getProvinceName(defaultLat, defaultLng);
-                });
-            } else {
-                console.error("Geolocation is not supported by this browser.");
-                const defaultLat = userDetails?.latitude ? parseFloat(userDetails.latitude, 10) : null;
-                const defaultLng = userDetails?.longitude ? parseFloat(userDetails.longitude, 10) : null;
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                setFormValues(prevState => ({
+                    ...prevState,
+                    latitude: lat,
+                    longitude: lng
+                }));
+                getProvinceName(lat, lng);
+            }, (error) => {
+                console.error("Error obtaining location: ", error);
+                const defaultLat = userDetails?.latitude ? parseFloat(userDetails.latitude) : 13.7563;
+                const defaultLng = userDetails?.longitude ? parseFloat(userDetails.longitude) : 100.5018;
                 setFormValues(prevState => ({
                     ...prevState,
                     latitude: defaultLat,
                     longitude: defaultLng
                 }));
                 getProvinceName(defaultLat, defaultLng);
-            }
-        }, []);
-
-        const defaultLat = userDetails?.latitude ? parseFloat(userDetails.latitude, 10) : null;
-        const defaultLng = userDetails?.longitude ? parseFloat(userDetails.longitude, 10) : null;
-        console.log( defaultLat, defaultLng)
+            });
+        } else {
+            console.error("Geolocation is not supported by this browser.");
+            const defaultLat = userDetails?.latitude ? parseFloat(userDetails.latitude) : 13.7563;
+            const defaultLng = userDetails?.longitude ? parseFloat(userDetails.longitude) : 100.5018;
+            setFormValues(prevState => ({
+                ...prevState,
+                latitude: defaultLat,
+                longitude: defaultLng
+            }));
+            getProvinceName(defaultLat, defaultLng);
+        }
+    }, []);
     
-        const getProvinceName = async (latitude, longitude) => {
-            try {
-                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`);
-                const data = await response.json();
-                const address = data.address || {};
-                const province = address.state || address.province || "Unknown";
+
+    const defaultLat = parseFloat(userDetails.latitude);
+    const defaultLng = parseFloat(userDetails.longitude);
+    console.log(defaultLat, defaultLng)
+
+    const getProvinceName = async (latitude, longitude) => {
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`);
+            const data = await response.json();
+            const address = data.address || {};
+            const province = address.state || address.province || "Unknown";
+            setFormValues(prevState => ({
+                ...prevState,
+                province: province
+            }));
+        } catch (error) {
+            console.error("Error fetching province name: ", error);
+        }
+    };
+
+    useEffect(() => {
+        if (mapRef.current) {
+            mapRef.current.setView([formValues.latitude, formValues.longitude], 10); // เลื่อนแผนที่ไปยังพิกัดใหม่
+            mapRef.current.invalidateSize();  // อัปเดตขนาดแผนที่
+        }
+    }, [formValues.latitude, formValues.longitude]);
+
+    function LocationMarker() {
+        const map = useMapEvents({
+            click(e) {
+                const { lat, lng } = e.latlng;  // รับพิกัดจากแผนที่
                 setFormValues(prevState => ({
                     ...prevState,
-                    province: province
+                    latitude: lat,  // อัปเดตค่าพิกัด latitude
+                    longitude: lng, // อัปเดตค่าพิกัด longitude
                 }));
-            } catch (error) {
-                console.error("Error fetching province name: ", error);
+                getProvinceName(lat, lng);  // ดึงชื่อจังหวัดใหม่จากพิกัด
             }
-        };
+        });
     
-        function LocationMarker() {
-            useMapEvents({
-                click(e) {
-                    const { lat, lng } = e.latlng;
-                    setFormValues(prevState => ({
-                        ...prevState,
-                        latitude: lat,
-                        longitude: lng
-                    }));
-                    getProvinceName(lat, lng);
-                }
-            });
-    
-            return formValues.latitude !== null ? (
-                <Marker position={[formValues.latitude, formValues.longitude]} />
-            ) : null;
-        }
+        return formValues.latitude && formValues.longitude ? (
+            <Marker position={[formValues.latitude, formValues.longitude]} />
+        ) : null;
+    }    
 
     return (
         <div className="modal-overlay">
@@ -251,17 +281,12 @@ export default function ModalEditinfo({ onClose, onSave, userDetails, eventID })
                         <div className="mt-4">
                             <h4>เลือกตำแหน่งที่ตั้ง: {formValues.province} </h4>
                             <MapContainer
-                                center={[
-                                    formValues.latitude || 16.87724352429937,
-                                    formValues.longitude || 99.12706375122072
-                                ]}
+                                center={[formValues.latitude, formValues.longitude]}
                                 zoom={10}
                                 style={{ height: "300px", width: "100%" }}
                                 whenCreated={(mapInstance) => { mapRef.current = mapInstance; }}
                             >
-                                <TileLayer
-                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                />
+                                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                                 <LocationMarker />
                             </MapContainer>
                         </div>

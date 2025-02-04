@@ -152,30 +152,29 @@ export const getAdmin = createAsyncThunk(
 
 
 //Reward create
-export const createReward = createAsyncThunk("user/createRewards", 
-  async ({ formData }, { rejectWithValue, getState }) => {
-    const token = getState().user.userToken;
+export const createReward = createAsyncThunk("user/createRewards", async ({ formData }, { rejectWithValue, getState }) => {
+  const token = getState().user.userToken;
 
-    if (!token) {
-      return rejectWithValue("Token or role not found!");
+  if (!token) {
+    return rejectWithValue("Token or role not found!");
+  }
+
+  const url = rewards.createReward; // Ensure this is the correct API URL
+
+  try {
+    const response = await axios.post(url, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data"  // Important for file uploads
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      return rejectWithValue(error.response.data);
     }
-
-    const url = rewards.createReward;
-
-    try {
-
-      const response = await axios.post(url , formData , {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-      });
-      return response.data;
-    } catch (error) {
-      if (error.response && error.response.data) {
-        return rejectWithValue(error.response.data);
-      }
-    }
+  }
 });
 
 //Reward update
@@ -196,7 +195,7 @@ export const updateReward = createAsyncThunk(
       const response = await axios.put(url, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          "Content-Type": "multipart/form-data"
         }
       });
       return response.data;

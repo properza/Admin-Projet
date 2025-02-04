@@ -6,7 +6,7 @@ import './leaflet.css';
 import './ModalCA.css';
 import InputText from '../../../components/Input/InputText';
 import SelectBox from '../../../components/Input/SelectBox';
-import { fetchCurrentUser, createEvent, SentMessage, getNormal , getSpecail } from '../../../components/common/userSlice';
+import { fetchCurrentUser, createEvent, SentMessage, getNormal, getSpecail } from '../../../components/common/userSlice';
 import Swal from 'sweetalert2';
 import { format } from 'date-fns';
 import { th } from 'date-fns/locale';
@@ -21,13 +21,13 @@ export default function ModalCA({ onClose, onSave }) {
         lineUserId: item.customer_id,
         name: item.name,
         stType: item.st_tpye
-      })) || [];
-    
-      const normalUsers = normalDataRaw?.data?.map(item => ({
+    })) || [];
+
+    const normalUsers = normalDataRaw?.data?.map(item => ({
         lineUserId: item.customer_id,
         name: item.name,
         stType: item.st_tpye
-      })) || [];
+    })) || [];
 
     const [isMapVisible, setIsMapVisible] = useState(false);
     const [formValues, setFormValues] = useState({
@@ -45,10 +45,12 @@ export default function ModalCA({ onClose, onSave }) {
         event_type: '' // กำหนดเป็นค่าว่างเริ่มต้น
     });
 
-    useEffect(()=>{
+    // console.log(formValues)
+
+    useEffect(() => {
         dispatch(getSpecail())
         dispatch(getNormal())
-    },[dispatch])
+    }, [dispatch])
 
     useEffect(() => {
         if (!currentUser) {
@@ -68,33 +70,53 @@ export default function ModalCA({ onClose, onSave }) {
 
     const handleSave = async () => {
         try {
-          if (!formValues.admin_id) {
-            console.error("Admin ID is missing");
-            return;
-          }
+            // ตรวจสอบว่า endDate น้อยกว่า startDate หรือไม่
+            if (formValues.endDate && new Date(formValues.endDate) < new Date(formValues.startDate)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'กรุณาเลือกวันที่สิ้นสุดให้ถูกต้อง',
+                    text: 'วันที่สิ้นสุดต้องมากกว่าหรือเท่ากับวันที่เริ่มต้น',
+                });
+                return;
+            }
     
-          // ถ้าเป็น super_admin แต่ยังไม่เลือก event_type
-          if (currentUser?.role === 'super_admin' && !formValues.event_type) {
-            Swal.fire({
-              icon: 'warning',
-              title: 'เลือกประเภทกิจกรรม',
-              text: 'กรุณาเลือกประเภทกิจกรรม (ทั่วไป หรือ กยศ.)',
-            });
-            return;
-          }
+            // ตรวจสอบว่า endTime น้อยกว่า startTime หรือไม่
+            if (formValues.endTime && formValues.endTime < formValues.startTime) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'กรุณาเลือกเวลาที่สิ้นสุดให้ถูกต้อง',
+                    text: 'เวลาที่สิ้นสุดต้องมากกว่าหรือเท่ากับเวลาที่เริ่มต้น',
+                });
+                return;
+            }
     
-          // สร้างรูปแบบข้อความ
-          const startDateFormatted = formValues.startDate
-            ? format(new Date(formValues.startDate), "d MMM yyyy", { locale: th })
-            : "วันที่ไม่ถูกต้อง";
-          const startTimeFormatted = formValues.startTime
-            ? format(new Date(`1970-01-01T${formValues.startTime}:00`), "HH:mm", { locale: th })
-            : "เวลาไม่ถูกต้อง";
-          const endTimeFormatted = formValues.endTime
-            ? format(new Date(`1970-01-01T${formValues.endTime}:00`), "HH:mm", { locale: th })
-            : "เวลาไม่ถูกต้อง";
+            if (!formValues.admin_id) {
+                console.error("Admin ID is missing");
+                return;
+            }
     
-          const messageText = `
+            // ถ้าเป็น super_admin แต่ยังไม่เลือก event_type
+            if (currentUser?.role === 'super_admin' && !formValues.event_type) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'เลือกประเภทกิจกรรม',
+                    text: 'กรุณาเลือกประเภทกิจกรรม (ทั่วไป หรือ กยศ.)',
+                });
+                return;
+            }
+    
+            // สร้างรูปแบบข้อความ
+            const startDateFormatted = formValues.startDate
+                ? format(new Date(formValues.startDate), "d MMM yyyy", { locale: th })
+                : "วันที่ไม่ถูกต้อง";
+            const startTimeFormatted = formValues.startTime
+                ? format(new Date(`1970-01-01T${formValues.startTime}:00`), "HH:mm", { locale: th })
+                : "เวลาไม่ถูกต้อง";
+            const endTimeFormatted = formValues.endTime
+                ? format(new Date(`1970-01-01T${formValues.endTime}:00`), "HH:mm", { locale: th })
+                : "เวลาไม่ถูกต้อง";
+    
+            const messageText = `
             เชิญชวน นศ. ${formValues.event_type === 'special' ? 'กยศ.' : 'ทั่วไป'}
             เข้าร่วม ${formValues.activityName}
             จัดขึ้นในวันที่ ${startDateFormatted}
@@ -102,52 +124,53 @@ export default function ModalCA({ onClose, onSave }) {
             ณ ${formValues.Nameplace}
           `.trim();
     
-          // 1) เรียก createEvent
-          const createdResult = await dispatch(createEvent(formValues)).unwrap();
-          console.log("สร้างกิจกรรมเสร็จ:", createdResult);
+            // 1) เรียก createEvent
+            const createdResult = await dispatch(createEvent(formValues)).unwrap();
+            console.log("สร้างกิจกรรมเสร็จ:", createdResult);
     
-          // 2) แจ้งเตือนว่ากิจกรรมสร้างสำเร็จ
-          const currentDate = new Date().toLocaleDateString('th-TH', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric'
-          });
-          dispatch(showNotification({
-            message: `ได้สร้างกิจกรรมสำเร็จแล้วในวันที่ ${currentDate}`,
-            status: 1
-          }));
+            // 2) แจ้งเตือนว่ากิจกรรมสร้างสำเร็จ
+            const currentDate = new Date().toLocaleDateString('th-TH', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+            dispatch(showNotification({
+                message: `ได้สร้างกิจกรรมสำเร็จแล้วในวันที่ ${currentDate}`,
+                status: 1
+            }));
     
-          // 3) เลือกกลุ่มผู้ใช้
-          const isSpecial = (formValues.event_type === 'special');
-          const targetUsers = isSpecial ? specialUsers : normalUsers;
+            // 3) เลือกกลุ่มผู้ใช้
+            const isSpecial = (formValues.event_type === 'special');
+            const targetUsers = isSpecial ? specialUsers : normalUsers;
     
-          // 4) ส่งข้อความให้ทีละคน
-          const promises = targetUsers.map(user => {
-            const updatedSentData = {
-              to: user.lineUserId,
-              messages: [
-                {
-                  type: 'text',
-                  text: messageText
-                }
-              ]
-            };
-            return dispatch(SentMessage(updatedSentData));
-          });
+            // 4) ส่งข้อความให้ทีละคน
+            const promises = targetUsers.map(user => {
+                const updatedSentData = {
+                    to: user.lineUserId,
+                    messages: [
+                        {
+                            type: 'text',
+                            text: messageText
+                        }
+                    ]
+                };
+                return dispatch(SentMessage(updatedSentData));
+            });
     
-          await Promise.all(promises);
+            await Promise.all(promises);
     
-          // สุดท้ายปิด modal
-          onSave();
+            // สุดท้ายปิด modal
+            onSave();
         } catch (err) {
-          console.error("Error creating event or sending messages:", err);
-          Swal.fire({
-            icon: 'error',
-            title: 'สร้างกิจกรรมไม่สำเร็จ',
-            text: 'กรุณากรอกข้อมูลให้ครบ หรือ ตรวจสอบการส่งข้อความอีกครั้ง'
-          });
+            console.error("Error creating event or sending messages:", err);
+            Swal.fire({
+                icon: 'error',
+                title: 'สร้างกิจกรรมไม่สำเร็จ',
+                text: 'กรุณากรอกข้อมูลให้ครบ หรือ ตรวจสอบการส่งข้อความอีกครั้ง'
+            });
         }
-      };
+    };
+    
 
     const courses = [
         { value: 'ทุกระดับการศึกษา', name: 'ทุกระดับการศึกษา' },
@@ -157,10 +180,14 @@ export default function ModalCA({ onClose, onSave }) {
     ];
 
     const handleUpdateFormValue = ({ updateType, value }) => {
-        setFormValues(prevState => ({
-            ...prevState,
-            [updateType]: value
-        }));
+        setFormValues(prevState => {
+            const updatedState = {
+                ...prevState,
+                [updateType]: value
+            };
+
+            return updatedState;
+        });
     };
 
     useEffect(() => {
@@ -177,8 +204,8 @@ export default function ModalCA({ onClose, onSave }) {
                 getProvinceName(lat, lng);
             }, (error) => {
                 console.error("Error obtaining location: ", error);
-                const defaultLat = 16.87724352429937;
-                const defaultLng = 99.12706375122072;
+                const defaultLat = 16.9029556405926;
+                const defaultLng = 99.12207346390002;
                 setFormValues(prevState => ({
                     ...prevState,
                     latitude: defaultLat,
@@ -188,8 +215,8 @@ export default function ModalCA({ onClose, onSave }) {
             });
         } else {
             console.error("Geolocation is not supported by this browser.");
-            const defaultLat = 16.87724352429937;
-            const defaultLng = 99.12706375122072;
+            const defaultLat = 16.9029556405926;
+            const defaultLng = 99.12207346390002;
             setFormValues(prevState => ({
                 ...prevState,
                 latitude: defaultLat,
@@ -218,19 +245,24 @@ export default function ModalCA({ onClose, onSave }) {
         useMapEvents({
             click(e) {
                 const { lat, lng } = e.latlng;
+    
+                console.log("Clicked Lat/Lng:", lat, lng);
+    
                 setFormValues(prevState => ({
                     ...prevState,
                     latitude: lat,
                     longitude: lng
                 }));
+    
                 getProvinceName(lat, lng);
             }
         });
-
+    
         return formValues.latitude !== null ? (
             <Marker position={[formValues.latitude, formValues.longitude]} />
         ) : null;
     }
+    
 
     return (
         <div className="modal-overlay">
@@ -249,8 +281,14 @@ export default function ModalCA({ onClose, onSave }) {
                         />
                         <SelectBox
                             labelTitle={'ระดับการศึกษา'}
-                            placeholder={'กรุณาเลือกระดับการศึกษา'}
-                            options={courses}
+                            // placeholder={'กรุณาเลือกระดับการศึกษา'}
+                            options={[
+                                { value: '', name: 'กรุณาเลือกระดับการศึกษา' },
+                                { value: 'ทุกระดับการศึกษา', name: 'ทุกระดับการศึกษา' },
+                                { value: 'ปวช.', name: 'ปวช.' },
+                                { value: 'ปวส', name: 'ปวส.' },
+                                { value: 'ป.ตรี', name: 'ป.ตรี' }
+                            ]}
                             updateFormValue={handleUpdateFormValue}
                             updateType='course'
                         />
@@ -267,6 +305,7 @@ export default function ModalCA({ onClose, onSave }) {
                             placeholder={'เลือกวันที่สิ้นสุด'}
                             updateFormValue={handleUpdateFormValue}
                             updateType="endDate"
+                            min={formValues.startDate}
                         />
                         <InputText
                             labelTitle={'เวลาที่เริ่มต้น'}
@@ -281,6 +320,7 @@ export default function ModalCA({ onClose, onSave }) {
                             placeholder={'เลือกเวลาที่สิ้นสุด'}
                             updateFormValue={handleUpdateFormValue}
                             updateType="endTime"
+                            min={formValues.startTime}
                         />
                         {currentUser?.role === 'super_admin' && (
                             <SelectBox
@@ -296,7 +336,7 @@ export default function ModalCA({ onClose, onSave }) {
                             />
                         )}
                     </div>
-                    
+
                     <InputText
                         labelTitle={'ชื่อสถานที่จัดกิจกรรม'}
                         type={'text'}
@@ -314,7 +354,7 @@ export default function ModalCA({ onClose, onSave }) {
                         <div className="mt-4">
                             <h4>เลือกตำแหน่งที่ตั้ง: {formValues.province} </h4>
                             <MapContainer
-                                center={[formValues.latitude || 16.87724352429937, formValues.longitude || 99.12706375122072]}
+                                center={[formValues.latitude || 16.9029556405926, formValues.longitude || 99.12207346390002]}
                                 zoom={10}
                                 style={{ height: "300px", width: "100%" }}
                             >

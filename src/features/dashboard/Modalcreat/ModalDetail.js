@@ -193,9 +193,10 @@ export default function ModalDetail({ onClose }) {
                             updateType="activityName"
                         />
                         <SelectBox
-                            labelTitle={'หลักสูตร'}
-                            placeholder={userDetails?.course ?? 'ไม่ระบุ'}
+                            labelTitle={'ระดับการศึกษา'}
+                            placeholder={'ระดับการศึกษา'}
                             options={courses}
+                            value={formValues.course}
                             updateFormValue={handleUpdateFormValue}
                             updateType='course'
                         />

@@ -37,7 +37,7 @@ function DocComponentsContent() {
         reward_name: '',
         points_required: '',
         amount: '',
-        rewardUrl: '',
+        images: '',
         can_redeem: true, // ค่าเริ่มต้น
     });
 
@@ -76,7 +76,7 @@ function DocComponentsContent() {
             reward_name: '',
             points_required: '',
             amount: '',
-            rewardUrl: '',
+            images: '',
             can_redeem: true,
         })
     };
@@ -88,7 +88,7 @@ function DocComponentsContent() {
             reward_name: '',
             points_required: '',
             amount: '',
-            rewardUrl: '',
+            images: '',
             can_redeem: true,
         });
         setIsModalOpen(true);
@@ -98,16 +98,16 @@ function DocComponentsContent() {
     const handleOpenEditReward = (data) => {
         setIsEditMode(true);
         setFormData({
-            // กำหนดค่าเริ่มต้นตาม reward ที่ต้องการแก้ไข
             reward_name: data.reward_name || '',
-            points_required: data.points_required || '',
-            amount: data.amount || '',
-            rewardUrl: data.rewardUrl || '',
+            points_required: data.points_required || 0,
+            amount: data.amount || 0,
+            images: [], // Clear previous images when editing
             can_redeem: data.can_redeem || false,
-            id: data.id,  // เก็บ id ไว้เผื่อส่งตอน update
+            id: data.id, 
         });
         setIsModalOpen(true);
     };
+    
 
     /* -------------------- DELETE -------------------- */
     const handleDeleteReward = (rewardID) => {
@@ -150,28 +150,50 @@ function DocComponentsContent() {
 
     /* -------------------- SUBMIT (CREATE/EDIT) -------------------- */
     const handleSubmitModal = () => {
-        // สร้างตัวแปรใหม่เพื่อแปลง fields เป็นตัวเลข
-        const formDataWithInt = {
-            ...formData,
-            points_required: parseInt(formData.points_required, 10), // แปลงเป็น int
-            amount: parseInt(formData.amount, 10),                   // แปลงเป็น int
+        if (!formData.reward_name || !formData.points_required || !formData.amount) {
+            Swal.fire({
+                icon: 'error',
+                title: 'ข้อมูลไม่ครบถ้วน',
+                text: 'กรุณากรอกข้อมูลให้ครบทุกช่อง',
+                showConfirmButton: false,
+                timer: 1500
+            });
+            return;
+        }
+    
+        // Create FormData for file uploads
+        const formDataToSend = new FormData();
+        formDataToSend.append('reward_name', formData.reward_name);
+        formDataToSend.append('points_required', formData.points_required);
+        formDataToSend.append('amount', formData.amount);
+        formDataToSend.append('can_redeem', formData.can_redeem);
+    
+        // Append files (multiple files if present)
+        if (formData.images && formData.images.length > 0) {
+            formData.images.forEach((file) => {
+                formDataToSend.append('images', file);  // Append each file
+            });
+        } else {
+            console.log('No images to append');
         }
 
+        console.log([...formDataToSend]);
+    
+        // If we are in edit mode, we are updating an existing reward
         if (isEditMode) {
-            // Update Reward
-            if (!formDataWithInt.id) {
+            if (!formData.id) {
                 Swal.fire({
                     icon: 'error',
                     title: 'ไม่พบ ID ของรางวัล',
                     text: 'ไม่สามารถแก้ไขได้',
                     showConfirmButton: false,
                     timer: 1500
-                })
+                });
                 return;
             }
-
-            const { id, ...rest } = formDataWithInt; // แยก id ออก
-            dispatch(updateReward({ rewardID: id, formData: rest }))
+    
+            const { id, ...rest } = formData; // Extract id, leave rest of the fields as is
+            dispatch(updateReward({ rewardID: id, formData: formDataToSend }))
                 .unwrap()
                 .then(() => {
                     Swal.fire({
@@ -179,8 +201,8 @@ function DocComponentsContent() {
                         title: 'แก้ไขของรางวัลสำเร็จ',
                         showConfirmButton: false,
                         timer: 1500
-                    })
-                    dispatch(getReward(currentPage));
+                    });
+                    dispatch(getReward(currentPage)); // Reload rewards
                     closeModal();
                 })
                 .catch((err) => {
@@ -188,14 +210,14 @@ function DocComponentsContent() {
                     Swal.fire({
                         icon: 'error',
                         title: 'เกิดข้อผิดพลาดในการแก้ไขของรางวัล',
-                        text: err?.message || '',
+                        text: err?.message || 'ไม่สามารถแก้ไขของรางวัลได้',
                         showConfirmButton: false,
                         timer: 2000
-                    })
-                })
+                    });
+                });
         } else {
-            const newData = { ...formDataWithInt, can_redeem: true }
-            dispatch(createReward({ formData: newData }))
+            // Otherwise, create a new reward
+            dispatch(createReward({ formData: formDataToSend }))
                 .unwrap()
                 .then(() => {
                     Swal.fire({
@@ -203,11 +225,11 @@ function DocComponentsContent() {
                         title: 'เพิ่มของรางวัลสำเร็จ',
                         showConfirmButton: false,
                         timer: 1500
-                    })
-                    dispatch(getReward(currentPage));
+                    });
+                    dispatch(getReward(currentPage)); // Reload rewards
                     closeModal();
-
-                    // ส่ง Notification
+    
+                    // Send notification
                     const currentDate = new Date();
                     const formattedDate = currentDate.toLocaleDateString('th-TH', {
                         day: 'numeric',
@@ -224,14 +246,13 @@ function DocComponentsContent() {
                     Swal.fire({
                         icon: 'error',
                         title: 'เกิดข้อผิดพลาดในการเพิ่มของรางวัล',
-                        text: err?.message || '',
+                        text: err?.message || 'ไม่สามารถเพิ่มของรางวัลได้',
                         showConfirmButton: false,
                         timer: 2000
-                    })
-                })
+                    });
+                });
         }
-    }
-
+    };
 
     /* -------------------- RENDER TABLE -------------------- */
     const renderReward = () => {
