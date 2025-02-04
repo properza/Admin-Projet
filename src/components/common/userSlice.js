@@ -80,7 +80,7 @@ export const updateadmin = createAsyncThunk(
     const url = adminEndpoint.updateA;
     
     try {
-      const response = await axios.put(url(adminID , formData), {
+      const response = await axios.put(adminEndpoint.updateA(adminID),formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'

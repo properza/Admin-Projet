@@ -98,7 +98,7 @@ function RewardModal({
               <input
                 type="checkbox"
                 name="can_redeem"
-                checked={formData.can_redeem || false}
+                checked={formData.can_redeem}
                 onChange={handleChange}
               />
               <label>อนุญาตให้แลก (can_redeem)</label>
