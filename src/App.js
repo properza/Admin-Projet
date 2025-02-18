@@ -25,7 +25,6 @@ function App() {
   //   }
   // }, [dispatch, userToken]);
 
-
   useEffect(() => {
     themeChange(false)
   }, [])

@@ -37,6 +37,8 @@ const rewards = {
 const CreateEventURL =`${baseUrl}admin/createEvent`
 const Editeventinfo = (eventID) => `${baseUrl}events/event/${eventID}/edit`;
 const DeleteEventdata = (eventID) => `${baseUrl}events/event/${eventID}/delete`;
+const getDetailuserUrl = (userID , page)=> `${baseUrl}customer/cloud/customer/${userID}?page=${page}&per_page=10`
+const getDetailuserEventUrl = (userID , page)=> `${baseUrl}events/customer/registered-events/${userID}?page=${page}&per_page=10`
 
 //Line OA 
 const LineMessageurl = `${baseUrl}admin/sendMessage`;
@@ -236,8 +238,54 @@ export const DeleteReward = createAsyncThunk(
   }
 );
 
+export const getDetailUser = createAsyncThunk(
+  "user/getDetailUsers",
+  async ({userID , page = 1}, { getState, rejectWithValue }) => {
+    const token = getState().user.userToken;
+    if (!token) {
+      return rejectWithValue("Token not found!");
+    }
 
-//get Reward
+    try {
+      const response = await axios.get(getDetailuserUrl(userID , page ), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  }
+);
+
+export const getDetailUseruserEvent = createAsyncThunk(
+  "user/getDetailUseruserEvents",
+  async ({userID,page = 1}, { getState, rejectWithValue }) => {
+    const token = getState().user.userToken;
+    if (!token) {
+      return rejectWithValue("Token not found!");
+    }
+
+    try {
+      const response = await axios.get(getDetailuserEventUrl(userID , page ), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  }
+);
+
 export const getReward = createAsyncThunk(
   "user/getRewards",
   async (page = 1, { getState, rejectWithValue }) => {
@@ -554,7 +602,9 @@ const userSlice = createSlice({
     getRewardData: { data: [], meta: {} },
     getNormalsData: { data: [], meta: {} },
     getSpecailsData: { data: [], meta: {} },
+    getDetailUserData: { data: [], meta: {} },
     getEventDetailsData: { data: [], meta: {} },
+    getDetailUseruserEventData: { data: [], meta: {} },
   },
   reducers: {
     resetState: (state) => {
@@ -594,6 +644,10 @@ const userSlice = createSlice({
             state.currentUser = action.payload;
           } else if (action.type.includes("getRewards")) {
             state.getRewardData = action.payload;
+          } else if (action.type.includes("getDetailUsers")) {
+            state.getDetailUserData = action.payload;
+          } else if (action.type.includes("getDetailUseruserEvents")) {
+            state.getDetailUseruserEventData = action.payload;
           } else if (action.type.includes("getAdmins")) {
             state.getAdminData = action.payload;
           } else if (action.type.includes("getEvents")) {

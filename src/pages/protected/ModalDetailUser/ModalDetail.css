@@ -1,0 +1,42 @@
+.modalD {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal-contentD {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: fit-content;
+    max-width: 90%;
+    .active{
+        border-bottom: 4px orange solid;
+        color: orange;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        thead {
+            position: sticky;
+            top: 0;
+            background-color: white; /* กำหนดพื้นหลังให้เฮดอยู่กับที่ */
+            z-index: 2; /* ทำให้เฮดอยู่เหนือ tbody */
+        }
+    }
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
