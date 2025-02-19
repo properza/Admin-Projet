@@ -11,6 +11,7 @@ const Leads = lazy(() => import('../pages/protected/Leads'))
 const Integration = lazy(() => import('../pages/protected/Integration'))
 const Transactions = lazy(() => import('../pages/protected/Transactions'))
 const DocComponents = lazy(() => import('../pages/DocComponents'))
+const Rewarduse = lazy(() => import('../features/documentation/components/Rewarduse.js'))
 
 
 const routes = [
@@ -37,6 +38,10 @@ const routes = [
   {
     path: '/reward-st',
     component: DocComponents,
+  },
+  {
+    path: '/reward-use',
+    component: Rewarduse,
   },
   {
     path: '/admin',

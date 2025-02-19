@@ -39,6 +39,8 @@ const Editeventinfo = (eventID) => `${baseUrl}events/event/${eventID}/edit`;
 const DeleteEventdata = (eventID) => `${baseUrl}events/event/${eventID}/delete`;
 const getDetailuserUrl = (userID , page)=> `${baseUrl}customer/cloud/customer/${userID}?page=${page}&per_page=10`
 const getDetailuserEventUrl = (userID , page)=> `${baseUrl}events/customer/registered-events/${userID}?page=${page}&per_page=10`
+const getrewardUsed =(rewardID)=>`${baseUrl}admin/customer_rewards/${rewardID}`
+const updateCompleteUrl = (rewardID)=>`${baseUrl}admin/customer_rewards/status/${rewardID}`
 
 //Line OA 
 const LineMessageurl = `${baseUrl}admin/sendMessage`;
@@ -68,6 +70,35 @@ export const createAdmin = createAsyncThunk("user/createAdmins",
       }
     }
 });
+
+export const updateCompleted = createAsyncThunk(
+  "user/updateCompleteds",
+  async ({ rewardID }, { rejectWithValue, getState }) => {
+    const token = getState().user.userToken;
+
+    if (!token) {
+      return rejectWithValue("Token or role not found!");
+    }
+
+    const url = updateCompleteUrl;
+
+    try {
+      const response = await axios.patch(url(rewardID), {}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data);
+      } else {
+        return rejectWithValue("Unknown error occurred!");
+      }
+    }
+  }
+);
+
 
 //admin update
 export const updateadmin = createAsyncThunk(
@@ -126,8 +157,32 @@ export const Deleteadmin = createAsyncThunk(
   }
 );
 
-
 //get admin
+export const getRewardUSE = createAsyncThunk(
+  "user/getRewardUSEs",
+  async (rewardID, { getState, rejectWithValue }) => {
+    const token = getState().user.userToken;
+    if (!token) {
+      return rejectWithValue("Token not found!");
+    }
+
+    try {
+      const response = await axios.get(getrewardUsed(rewardID), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data);
+      } else {
+        return rejectWithValue("Unknown error occurred!");
+      }
+    }
+  }
+);
+
 export const getAdmin = createAsyncThunk(
   "user/getAdmins",
   async (page = 1, { getState, rejectWithValue }) => {
@@ -598,6 +653,7 @@ const userSlice = createSlice({
     error: null,
     currentUser: null,
     userToken: localStorage.getItem("userToken") || null,
+    getRewardUSEData: { data: [] },
     getEventData: { data: [], meta: {} },
     getRewardData: { data: [], meta: {} },
     getNormalsData: { data: [], meta: {} },
@@ -615,6 +671,18 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+    .addCase(getRewardUSE.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase(getRewardUSE.fulfilled, (state, action) => {
+      state.loading = false;
+      state.getRewardUSEData = action.payload;
+    })
+    .addCase(getRewardUSE.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || "Failed to fetch rewards data";
+    })
       .addCase(fetchCurrentUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -650,6 +718,8 @@ const userSlice = createSlice({
             state.getDetailUseruserEventData = action.payload;
           } else if (action.type.includes("getAdmins")) {
             state.getAdminData = action.payload;
+          } else if (action.type.includes("getRewardUSEs")) {
+            state.getRewardUSEData = action.payload;
           } else if (action.type.includes("getEvents")) {
             state.getEventData = action.payload;
           } else if (action.type.includes("getNormals")) {
@@ -663,6 +733,8 @@ const userSlice = createSlice({
           } else if (action.type.includes("SentMessages")) {
             state.users.push(action.payload);
           } else if (action.type.includes("createAdmins")) {
+            state.users.push(action.payload);
+          } else if (action.type.includes("updateCompleteds")) {
             state.users.push(action.payload);
           } else if (action.type.includes("updateadmins")) {
             state.users.push(action.payload);

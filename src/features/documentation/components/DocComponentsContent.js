@@ -326,21 +326,23 @@ function DocComponentsContent() {
                 subTitle={`ทั้งหมด ${rewardData?.data?.length || 0} รายการ`}
                 TopSideButtons={createBTN}
             >
-                <table className='table text-center'>
-                    <thead>
-                        <tr>
-                            <th>No.</th>
-                            <th>ชื่อของรางวัล</th>
-                            <th>จำนวน (ชิ้น / อัน)</th>
-                            <th>รูปของรางวัล</th>
-                            <th>วันที่ได้เพิ่ม</th>
-                            <th>จัดการ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {renderReward()}
-                    </tbody>
-                </table>
+                <div className="overflow-auto h-[50vh]">
+                    <table className='table text-center'>
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>ชื่อของรางวัล</th>
+                                <th>จำนวน (ชิ้น / อัน)</th>
+                                <th>รูปของรางวัล</th>
+                                <th>วันที่ได้เพิ่ม</th>
+                                <th>จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {renderReward()}
+                        </tbody>
+                    </table>
+                </div>
                 {rewardData?.meta?.total >= 10 &&
                         <div className="flex justify-end mt-10">
                             <ReactPaginate

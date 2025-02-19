@@ -39,6 +39,9 @@ function Header(){
         <>
             <div className="navbar sticky bg-black top-0  z-10 shadow-md ">
                 <div className="flex-1">
+                <label htmlFor="left-sidebar-drawer" className="btn btn-primary drawer-button lg:hidden">
+                    <Bars3Icon className="h-5 inline-block w-5" />
+                </label>
                     <h1 className="text-2xl text-white font-semibold ml-2">{pageTitle}</h1>
                 </div>
 

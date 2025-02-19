@@ -195,6 +195,7 @@ function Transactions(){
             {showModalQRCode && (<ModalQRCode onClose={closeModal} eventID={qrEventID} userDetails={selectedUserDetails} />)}
             {showModalEdit && <ModalHDetail onClose={closeModal} eventID={selectedID}/>}
             <TitleCard2 title={'ประเภทกิจกรรม'} title2={roleSelect} subTitle={`ทั้งหมด ${eventData.meta?.total} รายการ`}>
+            <div className="overflow-auto h-[50vh]">
                 <table className='table text-center'>
                     <thead className=''>
                         <tr>
@@ -210,7 +211,7 @@ function Transactions(){
                     <tbody>
                         {renderEvents()}
                     </tbody>
-                </table>
+                </table></div>
                 {eventData.meta?.total >= 10 &&
                         <div className="flex justify-end mt-10">
                             <ReactPaginate
@@ -235,6 +236,7 @@ function Transactions(){
                             />
                         </div>
                     }
+                
             </TitleCard2>
 
 

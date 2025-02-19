@@ -60,6 +60,11 @@ const routes = [
     name: 'ของรางวัล', // name that appear in Sidebar
   },
   {
+    path: '/app/reward-use', // url
+    icon: <CalendarDaysIcon className={iconClasses}/>, // icon component
+    name: 'แลกใช้ของรางวัล', // name that appear in Sidebar
+  },
+  {
     path: '', // url
     name: 'ผู้ดูแล', // name that appear in Sidebar
     onlySuperAdmin: true,

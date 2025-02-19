@@ -94,23 +94,25 @@ function InternalPage() {
 
     return (
         <TitleCard2 title={'นักศึกษา ทั่วไป'} subTitle={`ทั้งหมด ${eventData?.meta?.total} รายการ`}>
-            <table className='table text-center'>
-                <thead className=''>
-                    <tr>
-                        <th>No.</th>
-                        <th>รหัสนักศึกษา</th>
-                        <th>ชื่อ - นามสกุล</th>
-                        <th>คณะ</th>
-                        <th>สาขา</th>
-                        <th>คะแนน</th>
-                        <th>เวลาที่เข้าร่วม</th>
-                        <th>เพิ่มเติม</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {renderEvents()}
-                </tbody>
-            </table>
+            <div className="overflow-auto h-[50vh]">
+                <table className='table text-center'>
+                    <thead className=''>
+                        <tr>
+                            <th>No.</th>
+                            <th>รหัสนักศึกษา</th>
+                            <th>ชื่อ - นามสกุล</th>
+                            <th>คณะ</th>
+                            <th>สาขา</th>
+                            <th>คะแนน</th>
+                            <th>เวลาที่เข้าร่วม</th>
+                            <th>เพิ่มเติม</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {renderEvents()}
+                    </tbody>
+                </table>
+            </div>
             {eventData.meta?.total >= 10 &&
                 <div className="flex justify-end mt-10">
                     <ReactPaginate

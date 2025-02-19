@@ -51,12 +51,12 @@ export default function ModalHDetail({ onClose , eventID }) {
                     {data?.branch_st}
                 </td>
                 <td>
-                    <span
+                    <span className='whitespace-nowrap'
                         style={{
                             backgroundColor: data?.status === 'กำลังเข้าร่วม' ? 'orange' : 'green',
                             color: '#fff',
                             padding: '4px 8px',
-                            borderRadius: '6px'
+                            borderRadius: '6px',
                         }}
                     >
                         {data?.status}

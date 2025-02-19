@@ -38,9 +38,7 @@ function LeftSidebar() {
                 <button className="btn btn-ghost bg-base-300  btn-circle z-50 top-0 right-0 mt-4 mr-2 absolute lg:hidden" onClick={() => close()}>
                     <XMarkIcon className="h-5 inline-block w-5" />
                 </button>
-                <div className="grid gap-3 border-b border-b-black pb-2 justify-center items-center gap-x-6">
-                    <img className="h-26 w-26 rounded-full" src="https://via.placeholder.com/100" alt="" />
-                    {/*  */}
+                <div className="grid gap-3 border-b border-b-black pb-2 justify-center items-center gap-x-6 mt-10">
                     <p className='text-center text-[1rem] font-semibold'>ผู้ดูแล ( {roleSelect} )</p>
                 </div>
                 {
