@@ -6,6 +6,7 @@ import { getRewardUSE, updateCompleted } from "../../../components/common/userSl
 import { showNotification } from "../../common/headerSlice"
 import { format } from 'date-fns';
 import { th } from 'date-fns/locale';
+import { BrowserMultiFormatReader } from '@zxing/library';
 
 export default function Rewarduse() {
     const dispatch = useDispatch()
@@ -13,10 +14,30 @@ export default function Rewarduse() {
     const rewardData = useSelector((state) => state.user.getRewardUSEData)
     const error = useSelector((state) => state.user.error)
     const loading = useSelector((state) => state.user.loading)
+    const [scanning, setScanning] = useState(false);
+    const [videoRef, setVideoRef] = useState(null);
+    
 
     useEffect(() => {
         dispatch(setPageTitle({ title: "แลกใช้ของรางวัล" }))
     }, [dispatch])
+
+    useEffect(() => {
+        if (scanning && videoRef) {
+          const codeReader = new BrowserMultiFormatReader();
+          codeReader.decodeFromVideoDevice(null, videoRef, (result, error) => {
+            if (result) {
+              setRewardCode(result.getText());
+              setScanning(false); // Stop scanning after successful scan
+            }
+            if (error) {
+              console.error('Error decoding barcode', error);
+            }
+          });
+    
+          return () => codeReader.reset(); // Clean up the reader
+        }
+      }, [scanning, videoRef]);
 
     console.log(error)
 
@@ -70,13 +91,24 @@ export default function Rewarduse() {
                 <div className="grid gap-1 w-1/2 justify-center text-center" htmlFor="ป้อนรหัส">
                     ป้อนรหัสเพื่อใช้ของรางวัล
                     <div className="flex justify-center items-center gap-1">
+                        {scanning ? (
+                            <video
+                                ref={setVideoRef}
+                                width="300"
+                                height="200"
+                                style={{
+                                    transform: "scaleX(-1)", // การกลับภาพให้เหมือนกระจก
+                                    border: "2px solid red", // เส้นแนวนอนด้านบน
+                                }}
+                            />
+                        ) :
                         <input
                             type="text"
                             className="border border-gray-400 text-gray-400"
                             value={rewardCode}  // ค่าจาก state
                             onChange={(e) => setRewardCode(e.target.value)}  // อัพเดทค่าที่ป้อนลงใน state
-                        />
-                        <button className="w-7 h-7 p-1 hover:bg-gray-400 rounded-md">{BarCode}</button>
+                        />}
+                        {!scanning ? <button onClick={() => setScanning(true)} className="w-7 h-7 p-1 hover:bg-gray-400 rounded-md">{BarCode}</button> : <button onClick={() => setScanning(false)} className="w-7 h-7 p-1 hover:bg-gray-400 rounded-md">ปิด</button>}
                     </div>
                     <div className="mt-2">
                         <button
