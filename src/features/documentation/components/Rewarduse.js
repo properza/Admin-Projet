@@ -101,7 +101,7 @@ export default function Rewarduse() {
                                     border: "2px solid red", // เส้นแนวนอนด้านบน
                                 }}
                             />
-                        ) :
+                        ) : 
                         <input
                             type="text"
                             className="border border-gray-400 text-gray-400"
