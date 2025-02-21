@@ -74,11 +74,11 @@ function InternalPage() {
                         {data?.branch_st}
                     </td>
                     <td>
-                        {data?.total_point ?? '0'}
+                        {data?.total_hour}
                     </td>
-                    <td>
+                    {/* <td>
                         {timeDisplay}
-                    </td>
+                    </td> */}
                     <td>
                         <button
                             className='border border-orange-400 rounded-md text-orange-400 p-1 hover:bg-orange-400 hover:text-white'
@@ -104,8 +104,8 @@ function InternalPage() {
                             <th>ชื่อ - นามสกุล</th>
                             <th>คณะ</th>
                             <th>สาขา</th>
-                            <th>คะแนน</th>
-                            <th>เวลาที่เข้าร่วม</th>
+                            <th>ชม. สะสม</th>
+                            {/* <th>เวลาที่เข้าร่วม</th> */}
                             <th>เพิ่มเติม</th>
                         </tr>
                     </thead>

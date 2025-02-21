@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getDetailUser, getDetailUseruserEvent } from '../../../components/common/userSlice';
+import { getDetailUser, getDetailUseruserEvent, getdetailSpecial, fetchCurrentUser , setComplete } from '../../../components/common/userSlice';
 import './ModalDetail.css'
+import { showNotification } from '../../../features/common/headerSlice';
 import { format } from 'date-fns';
 import { th } from 'date-fns/locale';
 import ModalImage from './ModalImage';
 import ReactPaginate from 'react-paginate';
+import Swal from 'sweetalert2'; 
 
 function UserDetailModal({ user, isOpen, onClose }) {
     const dispatch = useDispatch()
+    const currentUser = useSelector(state => state.user.currentUser);
     const detailUserdata = useSelector((state) => state.user.getDetailUserData);
     const detailUserEventdata = useSelector((state) => state.user.getDetailUseruserEventData);
+    const detailspecialdata = useSelector((state) => state.user.getdetailSpecialsData);
     const [currentPage, setCurrentPage] = useState(1);
     const [currentPage2, setCurrentPage2] = useState(1);
     const loading = useSelector(state => state.user.loading);
@@ -18,6 +22,10 @@ function UserDetailModal({ user, isOpen, onClose }) {
     const [activeBtn, setactiveBtn] = useState('กิจกรรม');
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     const [selectedImages, setSelectedImages] = useState([]);
+    
+        useEffect(() => {
+            dispatch(fetchCurrentUser())
+        }, [dispatch])
 
     const openImageModal = (images) => {
         setSelectedImages(images);
@@ -29,9 +37,95 @@ function UserDetailModal({ user, isOpen, onClose }) {
         setSelectedImages([]);
     };
 
+    const handleApprove = (eventId) => {
+        // แสดง swal ให้ผู้ใช้ยืนยันการอนุมัติ
+        Swal.fire({
+            title: 'ต้องการอนุมัติหรือไม่?',
+            showCancelButton: true,
+            confirmButtonText: 'อนุมัติ',
+            cancelButtonText: 'ยกเลิก',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                dispatch(setComplete({ eventID: eventId, status: 'อนุมัติ' }))
+                    .then(() => {
+                        Swal.fire({
+                            title: 'ทำรายการสำเร็จ',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+    
+                        dispatch(getdetailSpecial({ page: currentPage2, userID: user?.customer_id }));
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            title: 'เกิดข้อผิดพลาด',
+                            text: error.message,
+                            icon: 'error',
+                            timer: 1500
+                        });
+                        dispatch(getdetailSpecial({ page: currentPage2, userID: user?.customer_id }));
+                    });
+            }
+        });
+    };
+
+    // const handleComplete = async (reID) => {
+    //         if (reID) {
+    //             try {
+    //                 const result = await dispatch(updateCompleted({ rewardID: reID })).unwrap();
+    //                 dispatch(showNotification({
+    //                     message: `ได้แลกของรางวัลสำเร็จแล้ว ${currentDate}`,
+    //                     status: 1,
+    //                 }));
+    //                 dispatch(getRewardUSE(rewardCode))
+    //             } catch (error) {
+    //                 dispatch(showNotification({
+    //                     message: `เกิดข้อผิดพลาด: ${error.message}`,
+    //                     status: 0,
+    //                 }));
+    //                 dispatch(getRewardUSE(rewardCode))
+    //             }
+    //         }
+    //     };
+    
+    const handleReject = (eventId) => {
+        Swal.fire({
+            title: 'ต้องการไม่อนุมัติหรือไม่?',
+            showCancelButton: true,
+            confirmButtonText: 'ไม่อนุมัติ',
+            cancelButtonText: 'ยกเลิก',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                dispatch(setComplete({ eventID: eventId, status: 'ไม่อนุมัติ' }))
+                    .then(() => {
+                        Swal.fire({
+                            title: 'ทำรายการสำเร็จ',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+    
+                        dispatch(getdetailSpecial({ page: currentPage2, userID: user?.customer_id }));
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            title: 'เกิดข้อผิดพลาด',
+                            text: error.message,
+                            icon: 'error',
+                            timer: 1500
+                        });
+                        dispatch(getdetailSpecial({ page: currentPage2, userID: user?.customer_id }));
+                    });
+            }
+        });
+    };
+    
     useEffect(() => {
         dispatch(getDetailUser({ page: currentPage, userID: user?.customer_id }))
         dispatch(getDetailUseruserEvent({ page: currentPage2, userID: user?.customer_id }))
+        dispatch(getdetailSpecial({ page: currentPage2, userID: user?.customer_id }))
+
     }, [dispatch, user , currentPage ,currentPage2])
 
     const handlePageChange = ({ selected }) => {
@@ -93,6 +187,7 @@ function UserDetailModal({ user, isOpen, onClose }) {
             );
         });
     };
+
     const renderspecailEvents = () => {
         if (loading) {
             return <tr><td colSpan="9">Loading...</td></tr>;
@@ -132,10 +227,105 @@ function UserDetailModal({ user, isOpen, onClose }) {
                             {image}
                         </button>
                     </td>
+                    {currentUser?.role === 'special' && 
+                        <td>
+                            <div className="flex justify-center gap-1">
+                                <select className='border border-gray-400 p-1 rounded-md' name="" id="">
+                                    <option selected value="">เลือกประเภท</option>
+                                    <option value="">กิจกรรมภายใน</option>
+                                    <option value="">กิจกรรมภายนอก</option>
+                                    <option value="">กิจกรรมออนไลน์</option>
+                                </select>
+                                <button className='border border-gray-400 rounded-md text-gray-400 p-1'>ปฏิเสธ</button>
+                            </div>
+
+                        </td>
+                        }
                 </tr>
             );
         });
     };
+
+    const renderspecailUser = () => {
+        if (loading) {
+            return <tr><td colSpan="9">Loading...</td></tr>;
+        }
+
+        if (error) {
+            return <tr><td colSpan="9">Error: {error}</td></tr>;
+        }
+
+        if (!detailspecialdata || !detailspecialdata.data || detailspecialdata.data.length === 0) {
+            return <tr><td colSpan="9">ยังไม่มีข้อมูลนักศึกษา</td></tr>;
+        }
+
+        return detailspecialdata.data.map((data, index) => {
+            const totalPoints = data?.total_point ?? 0;
+            const totalMinutes = totalPoints * 6; // 1 คะแนน = 6 นาที
+            const hours = Math.floor(totalMinutes / 60); // จำนวนชั่วโมง
+            const minutes = totalMinutes % 60; // จำนวนนาที
+
+            // แสดงผลในรูปแบบ "X ชั่วโมง Y นาที"
+            const timeDisplay = `${hours} ชม ${minutes} นาที`;
+
+            return (
+                <tr key={data.id}>
+                    <td>{index + 1}</td>
+                    <td >{data.event_name}</td>
+                    <td className='text-center'>{data.scores_type}</td>
+                    <td>
+                        {data.created_at ? format(new Date(data.created_at), "d MMM yyyy", { locale: th })
+                            : '-'
+                        }
+                    </td>
+                    <td>
+                        <button
+                            className='hover:bg-gray-300 h-8 w-8 p-1 rounded-md'
+                            onClick={() => openImageModal(data.images)}
+                        >
+                            {image}
+                        </button>
+                    </td>
+                    {currentUser?.role === 'special' && 
+                        <td>
+                            {data.status === 'รอดำเนินการ' ?
+                            <div className="flex justify-center gap-2">
+                                <button 
+                                    className='border border-green-600  rounded-md text-green-600  p-2'
+                                    onClick={() => handleApprove(data.id)}
+                                >
+                                    อนุมัติ
+                                </button>
+                                <button 
+                                    className='border border-red-400 rounded-md text-red-400 p-2'
+                                    onClick={() => handleReject(data.id)}
+                                >
+                                    ไม่อนุมัติ
+                                </button>
+                            </div>:
+                            data.status === 'อนุมัติ' ?
+                            <p className='w-8 h-8'>{iconCorrect}</p>:
+                            data.status === 'ไม่อนุมัติ' ?
+                            <p className='w-8 h-8'>{iconWrong}</p>: null
+                            }
+
+                        </td>
+                        }
+                </tr>
+            );
+        });
+    };
+
+    const iconCorrect = 
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="green" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
+        </svg>;
+    const iconWrong = 
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m8.99 14.993 6-6m6 3.001c0 1.268-.63 2.39-1.593 3.069a3.746 3.746 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043 3.745 3.745 0 0 1-3.068 1.593c-1.268 0-2.39-.63-3.068-1.593a3.745 3.745 0 0 1-3.296-1.043 3.746 3.746 0 0 1-1.043-3.297 3.746 3.746 0 0 1-1.593-3.068c0-1.268.63-2.39 1.593-3.068a3.746 3.746 0 0 1 1.043-3.297 3.745 3.745 0 0 1 3.296-1.042 3.745 3.745 0 0 1 3.068-1.594c1.268 0 2.39.63 3.068 1.593a3.745 3.745 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.297 3.746 3.746 0 0 1 1.593 3.068ZM9.74 9.743h.008v.007H9.74v-.007Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm4.125 4.5h.008v.008h-.008v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+        </svg>;
+    
+    
 
     if (!isOpen || !user) return null;
     return (
@@ -144,16 +334,19 @@ function UserDetailModal({ user, isOpen, onClose }) {
                 <div className="">
                     {/* <span className="close" onClick={onClose}>&times;</span> */}
                     <h2 className='font-bold text-xl mb-2'>รายละเอียดนักศึกษา</h2>
-                    <div className="pl-2">
-                        <p>รหัสนักศึกษา: {user.user_code}</p>
-                        <p>ชื่อ - นามสกุล: {user.first_name} {user.last_name}</p>
-                        <p>คณะ: {user.group_st}</p>
-                        <p>สาขา: {user.branch_st}</p>
+                    <div className="pl-2 grid grid-cols-2 gap-2">
+                        <label>รหัสนักศึกษา : <p className='border border-gray-400 p-1 rounded-md'>{user.user_code}</p></label>
+                        <label>ชื่อ - นามสกุล : <p className='border border-gray-400 p-1 rounded-md'>{user.first_name} {user.last_name}</p></label>
+                        <label>คณะ : <p className='border border-gray-400 p-1 rounded-md'>{user.group_st}</p></label>
+                        <label>สาขา : <p className='border border-gray-400 p-1 rounded-md'>{user.branch_st}</p></label>
+                        <label>ประเภทนักศึกษา : <p className='border border-gray-400 p-1 rounded-md'>{user.st_tpye}</p></label>
                     </div>
                 </div>
                 <div className="flex gap-2 my-2">
                     <button className={`${activeBtn === 'กิจกรรม' ? 'active' : ''}`} onClick={() => setactiveBtn('กิจกรรม')}>กิจกรรม</button>
-                    <button className={`${activeBtn === 'กิจกรรมพิเศษ' ? 'active' : ''}`} onClick={() => setactiveBtn('กิจกรรมพิเศษ')}>กิจกรรมพิเศษ</button>
+                    
+                    <button className={`${activeBtn === 'กิจกรรมพิเศษ' ? 'active' : ''}`} onClick={() => setactiveBtn('กิจกรรมพิเศษ')}>{currentUser?.role === 'special' ? 'จิตอาศา' : 'กิจกรรมพิเศษ' }</button>
+
                 </div>
 
                 {activeBtn === 'กิจกรรม' ? <>
@@ -206,15 +399,23 @@ function UserDetailModal({ user, isOpen, onClose }) {
                             <tr>
                                 <th>ลำดับ</th>
                                 <th>กิจกรรม</th>
-                                <th>วันที่เริมกิจกรรม</th>
+                                <th>ประเภทกิจกรรม</th>
+                                <th>วันที่เพิ่มกิจกรรม</th>
                                 <th>รูปภาพ</th>
+                                {currentUser?.role === 'special' && <th>จัดการ</th> }
                             </tr>
                         </thead>
+
                         <tbody>
-                            {renderspecailEvents()}
+                            {user.st_tpye !== 'กยศ.' ?
+                                renderspecailEvents():
+                                renderspecailUser()
+                            }
                         </tbody>
+
                     </table>
                 </div>
+                {user.st_tpye !== 'กยศ.' ?<>
                     {detailUserdata.meta?.total >= 10 &&
                         <div className="flex justify-end mt-10">
                             <ReactPaginate
@@ -238,7 +439,34 @@ function UserDetailModal({ user, isOpen, onClose }) {
                                 disabledClassName={"disabled"}
                             />
                         </div>
+                    }</>:
+                    <>
+                    {detailspecialdata.meta?.total >= 10 &&
+                        <div className="flex justify-end mt-10">
+                            <ReactPaginate
+                                previousLabel={"<"}
+                                nextLabel={">"}
+                                breakLabel={"..."}
+                                pageCount={detailspecialdata.meta?.last_page || 1}
+                                marginPagesDisplayed={2}
+                                pageRangeDisplayed={3}
+                                onPageChange={handlePageChange2}
+                                containerClassName={"pagination"}
+                                activeClassName={"active"}
+                                breakClassName={"page-item"}
+                                breakLinkClassName={"page-link"}
+                                pageClassName={"page-item"}
+                                pageLinkClassName={"page-link"}
+                                previousClassName={"page-item"}
+                                previousLinkClassName={"page-link"}
+                                nextClassName={"page-item"}
+                                nextLinkClassName={"page-link"}
+                                disabledClassName={"disabled"}
+                            />
+                        </div>
                     }
+                    </>
+                     }
                 </>
                 }
 

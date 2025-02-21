@@ -43,6 +43,11 @@ function LeftSidebar() {
                 </div>
                 {
                     routes.map((route, k) => {
+                        // ตรวจสอบว่าเมนูนี้สามารถแสดงได้หรือไม่ ตาม role ของ user
+                        if (route.role && !route.role.includes(currentUser?.role)) {
+                            return null
+                        }
+
                         if (route.onlySuperAdmin && currentUser?.role !== 'super_admin') {
                             return null
                         }

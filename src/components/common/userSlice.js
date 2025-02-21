@@ -38,9 +38,13 @@ const CreateEventURL =`${baseUrl}admin/createEvent`
 const Editeventinfo = (eventID) => `${baseUrl}events/event/${eventID}/edit`;
 const DeleteEventdata = (eventID) => `${baseUrl}events/event/${eventID}/delete`;
 const getDetailuserUrl = (userID , page)=> `${baseUrl}customer/cloud/customer/${userID}?page=${page}&per_page=10`
-const getDetailuserEventUrl = (userID , page)=> `${baseUrl}events/customer/registered-events/${userID}?page=${page}&per_page=10`
 const getrewardUsed =(rewardID)=>`${baseUrl}admin/customer_rewards/${rewardID}`
 const updateCompleteUrl = (rewardID)=>`${baseUrl}admin/customer_rewards/status/${rewardID}`
+
+const getDetailuserEventUrl = (userID , page)=> `${baseUrl}events/customer/registered-events/${userID}?page=${page}&per_page=10`
+const getdetailSpecialUserUrl = (userID , page)=> `${baseUrl}customer/special-events/${userID}?page=${page}&per_page=10`
+
+const setCompleteUrl = (eventID)=>`${baseUrl}admin/special-events/status/${eventID}`;
 
 //Line OA 
 const LineMessageurl = `${baseUrl}admin/sendMessage`;
@@ -341,6 +345,29 @@ export const getDetailUseruserEvent = createAsyncThunk(
   }
 );
 
+export const getdetailSpecial = createAsyncThunk(
+  "user/getdetailSpecials",
+  async ({userID,page = 1}, { getState, rejectWithValue }) => {
+    const token = getState().user.userToken;
+    if (!token) {
+      return rejectWithValue("Token not found!");
+    }
+
+    try {
+      const response = await axios.get(getdetailSpecialUserUrl(userID , page ), {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  }
+);
+
 export const getReward = createAsyncThunk(
   "user/getRewards",
   async (page = 1, { getState, rejectWithValue }) => {
@@ -582,6 +609,36 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
+export const setComplete = createAsyncThunk(
+  "user/setCompletes",
+  async ({ eventID , status }, { getState, rejectWithValue }) => {
+    const token = getState().user.userToken;
+
+    if (!token) {
+      return rejectWithValue("Token or role not found!");
+    }
+
+    const url = setCompleteUrl(eventID); 
+
+    try {
+      const response = await axios.put(url, {status}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error response:", error.response); // Log the error response
+      if (error.response) {
+        return rejectWithValue(error.response.data);
+      } else {
+        console.error("Network error:", error.message);
+        return rejectWithValue("Network error occurred");
+      }
+    }
+  }
+);
+
 export const editEvent = createAsyncThunk(
   "user/editEvents",
   async ({ eventID, formValues }, { getState, rejectWithValue }) => {
@@ -660,6 +717,7 @@ const userSlice = createSlice({
     getSpecailsData: { data: [], meta: {} },
     getDetailUserData: { data: [], meta: {} },
     getEventDetailsData: { data: [], meta: {} },
+    getdetailSpecialsData: { data: [], meta: {} },
     getDetailUseruserEventData: { data: [], meta: {} },
   },
   reducers: {
@@ -716,6 +774,8 @@ const userSlice = createSlice({
             state.getDetailUserData = action.payload;
           } else if (action.type.includes("getDetailUseruserEvents")) {
             state.getDetailUseruserEventData = action.payload;
+          } else if (action.type.includes("getdetailSpecials")) {
+            state.getdetailSpecialsData = action.payload;
           } else if (action.type.includes("getAdmins")) {
             state.getAdminData = action.payload;
           } else if (action.type.includes("getRewardUSEs")) {

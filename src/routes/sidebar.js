@@ -23,8 +23,8 @@ const iconClasses = `h-6 w-6`
 
 const routes = [
   {
-    path: '', // url
-    name: 'กิจกรรม', // name that appear in Sidebar
+    path: '',
+    name: 'กิจกรรม',
   },
   {
     path: '/app/home',
@@ -32,48 +32,53 @@ const routes = [
     name: 'กิจกรรมทั้งหมด',
   },
   {
-    path: '/app/history', // url
-    icon: <CurrencyDollarIcon className={iconClasses}/>, // icon component
-    name: 'ประวัติกิจกรรม', // name that appear in Sidebar
+    path: '/app/history',
+    icon: <CurrencyDollarIcon className={iconClasses}/>,
+    name: 'ประวัติกิจกรรม',
   },
   {
-    path: '', // url
-    name: 'รายชื่อนักศึกษา', // name that appear in Sidebar
+    path: '',
+    name: 'รายชื่อนักศึกษา',
   },
   {
-    path: '/app/general-st', // url
-    icon: <ChartBarIcon className={iconClasses}/>, // icon component
-    name: 'รายชื่อนักศึกษาทั่วไป', // name that appear in Sidebar
+    path: '/app/general-st',
+    icon: <ChartBarIcon className={iconClasses}/>,
+    name: 'รายชื่อนักศึกษาทั่วไป',
+    role: ['super_admin', 'normal']
   },
   {
-    path: '/app/specail-st', // url
-    icon: <BoltIcon className={iconClasses}/>, // icon component
-    name: 'รายชื่อนักศึกษา กยศ.', // name that appear in Sidebar
+    path: '/app/specail-st',
+    icon: <BoltIcon className={iconClasses}/>,
+    name: 'รายชื่อนักศึกษา กยศ.',
+    role: ['super_admin', 'special']
   },
   {
-    path: '', // url
-    name: 'รางวัล', // name that appear in Sidebar
+    path: '',
+    name: 'รางวัล',
+    role: ['super_admin', 'normal']
   },
   {
-    path: '/app/reward-st', // url
-    icon: <CalendarDaysIcon className={iconClasses}/>, // icon component
-    name: 'ของรางวัล', // name that appear in Sidebar
+    path: '/app/reward-st',
+    icon: <CalendarDaysIcon className={iconClasses}/>,
+    name: 'ของรางวัล',
+    role: ['super_admin', 'normal']
   },
   {
-    path: '/app/reward-use', // url
-    icon: <CalendarDaysIcon className={iconClasses}/>, // icon component
-    name: 'แลกใช้ของรางวัล', // name that appear in Sidebar
+    path: '/app/reward-use',
+    icon: <CalendarDaysIcon className={iconClasses}/>,
+    name: 'แลกใช้ของรางวัล',
+    role: ['super_admin', 'normal']
   },
   {
-    path: '', // url
-    name: 'ผู้ดูแล', // name that appear in Sidebar
+    path: '',
+    name: 'ผู้ดูแล',
     onlySuperAdmin: true,
   },
   {
     path: '/app/admin', 
     icon: <UsersIcon className={iconClasses}/>, 
     name: 'รายชื่อผู้ดูแล',  
-    onlySuperAdmin: true,    // เพิ่ม property พิเศษ สำหรับเช็กสิทธิ์
+    onlySuperAdmin: true,
   },
 ]
 
