@@ -345,7 +345,7 @@ function UserDetailModal({ user, isOpen, onClose }) {
                 <div className="flex gap-2 my-2">
                     <button className={`${activeBtn === 'กิจกรรม' ? 'active' : ''}`} onClick={() => setactiveBtn('กิจกรรม')}>กิจกรรม</button>
                     
-                    <button className={`${activeBtn === 'กิจกรรมพิเศษ' ? 'active' : ''}`} onClick={() => setactiveBtn('กิจกรรมพิเศษ')}>{currentUser?.role === 'special' ? 'กิจกรรมจิตอาศา' : 'กิจกรรมพิเศษ' }</button>
+                    <button className={`${activeBtn === 'กิจกรรมพิเศษ' ? 'active' : ''}`} onClick={() => setactiveBtn('กิจกรรมพิเศษ')}>{currentUser?.role === 'special' || 'super_admin' ? 'กิจกรรมจิตอาศา' : 'กิจกรรมพิเศษ' }</button>
 
                 </div>
 
