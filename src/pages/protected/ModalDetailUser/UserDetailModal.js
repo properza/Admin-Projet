@@ -286,7 +286,7 @@ function UserDetailModal({ user, isOpen, onClose }) {
                             {image}
                         </button>
                     </td>
-                    {currentUser?.role === ('special' || 'super_admin') && 
+                    {(currentUser?.role === 'special' || currentUser?.role === 'super_admin') && 
                         <td>
                             {data.status === 'รอดำเนินการ' ?
                             <div className="flex justify-center gap-2">
@@ -402,7 +402,7 @@ function UserDetailModal({ user, isOpen, onClose }) {
                                 <th>ประเภทกิจกรรม</th>
                                 <th>วันที่เพิ่มกิจกรรม</th>
                                 <th>รูปภาพ</th>
-                                {currentUser?.role === ('special' || 'super_admin') && <th>จัดการ</th> }
+                                {(currentUser?.role === 'special' || currentUser?.role === 'super_admin') && <th>จัดการ</th> }
                             </tr>
                         </thead>
 
