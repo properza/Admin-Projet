@@ -286,7 +286,7 @@ function UserDetailModal({ user, isOpen, onClose }) {
                             {image}
                         </button>
                     </td>
-                    {(currentUser?.role === 'special' || currentUser?.role === 'super_admin') && 
+                    {user.st_tpye === 'กยศ.' && 
                         <td>
                             {data.status === 'รอดำเนินการ' ?
                             <div className="flex justify-center gap-2">
@@ -345,7 +345,7 @@ function UserDetailModal({ user, isOpen, onClose }) {
                 <div className="flex gap-2 my-2">
                     <button className={`${activeBtn === 'กิจกรรม' ? 'active' : ''}`} onClick={() => setactiveBtn('กิจกรรม')}>กิจกรรม</button>
                     
-                    <button className={`${activeBtn === 'กิจกรรมพิเศษ' ? 'active' : ''}`} onClick={() => setactiveBtn('กิจกรรมพิเศษ')}>{user.st_tpye === 'กยศ.' ? 'กิจกรรมจิตอาศา' : 'กิจกรรมพิเศษ' }</button>
+                    <button className={`${activeBtn === 'กิจกรรมพิเศษ' ? 'active' : ''}`} onClick={() => setactiveBtn('กิจกรรมพิเศษ')}>{user.st_tpye === 'กยศ.' ? 'กิจกรรมจิตอาสา' : 'กิจกรรมพิเศษ' }</button>
 
                 </div>
 
@@ -402,7 +402,7 @@ function UserDetailModal({ user, isOpen, onClose }) {
                                 <th>ประเภทกิจกรรม</th>
                                 <th>วันที่เพิ่มกิจกรรม</th>
                                 <th>รูปภาพ</th>
-                                {(currentUser?.role === 'special' || currentUser?.role === 'super_admin') && <th>จัดการ</th> }
+                                {user.st_tpye === 'กยศ.' && <th>จัดการ</th> }
                             </tr>
                         </thead>
 
