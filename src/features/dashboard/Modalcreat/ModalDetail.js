@@ -181,7 +181,7 @@ export default function ModalDetail({ onClose }) {
         <div className="modal-overlay">
             <div className="modal-container">
                 <div className="modal-header">
-                    แก้ไขกิจกรรม : {userDetails?.Nameplace ?? 'ไม่ระบุ'}
+                    แก้ไขกิจกรรม : {userDetails?.activityName ?? 'ไม่ระบุ'}
                 </div>
                 <div className="modal-body overflow-y-auto h-[50vh]">
                     <div className="grid grid-cols-2 gap-2 justify-center">
