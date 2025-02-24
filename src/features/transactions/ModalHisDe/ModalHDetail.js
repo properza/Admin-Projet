@@ -53,7 +53,7 @@ export default function ModalHDetail({ onClose , eventID }) {
                 <td>
                     <span className='whitespace-nowrap'
                         style={{
-                            backgroundColor: data?.status === 'กำลังเข้าร่วม' ? 'orange' : 'green',
+                            backgroundColor: data?.status === 'กำลังเข้าร่วม' ? 'orange' :data?.status === 'เข้าร่วมสำเร็จ' ? 'green' : 'red',
                             color: '#fff',
                             padding: '4px 8px',
                             borderRadius: '6px',
