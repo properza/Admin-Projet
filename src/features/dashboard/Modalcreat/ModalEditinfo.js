@@ -133,8 +133,8 @@ export default function ModalEditinfo({ onClose, onSave, userDetails, eventID })
     };
 
     useEffect(() => {
-        const defaultLat = 16.90303983261848;
-        const defaultLng = 99.1220104695936;
+        const defaultLat = formValues.latitude ?? 16.90303983261848;
+        const defaultLng = formValues.longitude ?? 99.1220104695936;
     
         setFormValues(prevState => ({
             ...prevState,
