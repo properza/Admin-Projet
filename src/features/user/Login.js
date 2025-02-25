@@ -52,9 +52,9 @@ function Login(){
             }
         } catch (error) {
             console.log("Login failed:", error);
-            let errorMessage = "Invalid email or password. Please try again.";
+            let errorMessage = "Invalid username or password. Please try again.";
             if (error || error.message === "Invalid credentials") {
-                errorMessage = "กรุณากรอกอีเมล และ password ให้ถูกต้อง";
+                errorMessage = "กรุณากรอกชื่อผู้ใช้ และ รหัสผ่าน ให้ถูกต้อง";
             } else if (error?.message) {
                 errorMessage = error.message;
             }
@@ -88,7 +88,7 @@ function Login(){
 
                         <div className="mb-4">
 
-                            <InputText type="emailId" defaultValue={loginObj.emailId} updateType="emailId" containerStyle="mt-4" labelTitle="Email Id" updateFormValue={updateFormValue}/>
+                            <InputText type="emailId" defaultValue={loginObj.emailId} updateType="emailId" containerStyle="mt-4" labelTitle="Username" updateFormValue={updateFormValue}/>
 
                             <InputText defaultValue={loginObj.password} type="password" updateType="password" containerStyle="mt-4" labelTitle="Password" updateFormValue={updateFormValue}/>
 
