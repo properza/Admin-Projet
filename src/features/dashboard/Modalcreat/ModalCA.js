@@ -191,40 +191,16 @@ export default function ModalCA({ onClose, onSave }) {
     };
 
     useEffect(() => {
-        // Get user's current position
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((position) => {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-                setFormValues(prevState => ({
-                    ...prevState,
-                    latitude: lat,
-                    longitude: lng
-                }));
-                getProvinceName(lat, lng);
-            }, (error) => {
-                console.error("Error obtaining location: ", error);
-                const defaultLat = 16.9029556405926;
-                const defaultLng = 99.12207346390002;
-                setFormValues(prevState => ({
-                    ...prevState,
-                    latitude: defaultLat,
-                    longitude: defaultLng
-                }));
-                getProvinceName(defaultLat, defaultLng);
-            });
-        } else {
-            console.error("Geolocation is not supported by this browser.");
-            const defaultLat = 16.9029556405926;
-            const defaultLng = 99.12207346390002;
+            const defaultLat = formValues.latitude ?? 16.90303983261848;
+            const defaultLng = formValues.longitude ?? 99.1220104695936;
+        
             setFormValues(prevState => ({
                 ...prevState,
                 latitude: defaultLat,
                 longitude: defaultLng
             }));
             getProvinceName(defaultLat, defaultLng);
-        }
-    }, []);
+        }, []);
 
     const getProvinceName = async (latitude, longitude) => {
         try {
