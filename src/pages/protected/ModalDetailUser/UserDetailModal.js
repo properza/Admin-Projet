@@ -214,6 +214,7 @@ function UserDetailModal({ user, isOpen, onClose }) {
                 <tr key={data.id}>
                     <td>{index + 1}</td>
                     <td>{data.event_name}</td>
+                    <td>กิจกรรมพิเศษ</td>
                     <td>
                         {data.created_at ? format(new Date(data.created_at), "d MMM yyyy", { locale: th })
                             : '-'
