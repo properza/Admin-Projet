@@ -77,7 +77,7 @@ function InternalPage() {
                         {data?.total_point ?? '0'}
                     </td>
                     <td>
-                        {timeDisplay}
+                        {data?.total_point ?? '0'}{/* {timeDisplay} */}
                     </td>
                     <td>
                         <button
