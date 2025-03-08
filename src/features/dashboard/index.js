@@ -7,6 +7,7 @@ import ReactPaginate from 'react-paginate';
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getEvent, fetchCurrentUser, DeleteEvent } from '../../components/common/userSlice';
+import ModalHDetail from '../transactions/ModalHisDe/ModalHDetail';
 import { format } from 'date-fns';
 import { th } from 'date-fns/locale';
 import Swal from 'sweetalert2';
@@ -16,6 +17,12 @@ const iconF1 = (
         <rect width="17" height="17" transform="translate(0.550781)" fill="white" />
         <path d="M14.15 2.12536C14.4881 2.12536 14.8123 2.25964 15.0514 2.49867C15.2904 2.73776 15.4246 3.06196 15.4246 3.4C15.4246 3.73806 15.2904 4.06229 15.0514 4.30138C15.0514 4.30139 15.0513 4.30141 15.0513 4.30143L8.72776 10.625H6.925V8.82224L13.2486 2.49867C13.2486 2.49865 13.2486 2.49864 13.2486 2.49862C13.4877 2.25962 13.8119 2.12536 14.15 2.12536Z" fill="#4400A5" stroke="white" stroke-width="0.85" />
         <path fill-rule="evenodd" clip-rule="evenodd" d="M2.25 5.1C2.25 4.64913 2.42911 4.21673 2.74792 3.89792C3.06673 3.57911 3.49913 3.4 3.95 3.4H7.35C7.57543 3.4 7.79163 3.48956 7.95104 3.64896C8.11045 3.80837 8.2 4.02457 8.2 4.25C8.2 4.47544 8.11045 4.69164 7.95104 4.85104C7.79163 5.01045 7.57543 5.1 7.35 5.1H3.95V13.6H12.45V10.2C12.45 9.97457 12.5396 9.75837 12.699 9.59896C12.8584 9.43956 13.0746 9.35 13.3 9.35C13.5254 9.35 13.7416 9.43956 13.901 9.59896C14.0604 9.75837 14.15 9.97457 14.15 10.2V13.6C14.15 14.0509 13.9709 14.4833 13.6521 14.8021C13.3333 15.1209 12.9009 15.3 12.45 15.3H3.95C3.49913 15.3 3.06673 15.1209 2.74792 14.8021C2.42911 14.4833 2.25 14.0509 2.25 13.6V5.1Z" fill="#4400A5" />
+    </svg>
+);
+const iconF2 = (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="17" height="17" transform="translate(0.25 0.5)" fill="white"/>
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M7.04922 3.90085C6.14748 3.90085 5.28268 4.25906 4.64506 4.89668C4.00743 5.53431 3.64922 6.39911 3.64922 7.30085C3.64922 8.20258 4.00743 9.06739 4.64506 9.70501C5.28268 10.3426 6.14748 10.7008 7.04922 10.7008C7.95095 10.7008 8.81576 10.3426 9.45338 9.70501C10.091 9.06739 10.4492 8.20258 10.4492 7.30085C10.4492 6.39911 10.091 5.53431 9.45338 4.89668C8.81576 4.25906 7.95095 3.90085 7.04922 3.90085ZM1.94922 7.30085C1.94912 6.49819 2.13846 5.70685 2.50186 4.99118C2.86526 4.2755 3.39245 3.6557 4.04056 3.18219C4.68866 2.70868 5.43937 2.39483 6.23164 2.26615C7.02391 2.13748 7.83537 2.19763 8.60001 2.44169C9.36466 2.68576 10.0609 3.10686 10.6321 3.67075C11.2033 4.23463 11.6334 4.92538 11.8873 5.68681C12.1412 6.44824 12.2118 7.25885 12.0934 8.05272C11.975 8.84658 11.6708 9.60129 11.2057 10.2554L15.3002 14.3499C15.455 14.5102 15.5407 14.7249 15.5387 14.9478C15.5368 15.1707 15.4474 15.3838 15.2898 15.5414C15.1322 15.699 14.919 15.7884 14.6962 15.7904C14.4733 15.7923 14.2586 15.7066 14.0983 15.5518L10.0047 11.4582C9.24168 12.0007 8.34406 12.3228 7.41019 12.389C6.47632 12.4553 5.54223 12.2632 4.71027 11.8339C3.87832 11.4045 3.1806 10.7544 2.69358 9.95484C2.20656 9.15527 1.94904 8.23707 1.94922 7.30085Z" fill="#FF8329"/>
     </svg>
 );
 const iconF3 = (
@@ -32,6 +39,7 @@ function Dashboard() {
     // state สำหรับ Modal ต่าง ๆ
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showModalEdit, setShowModalEdit] = useState(false);
+    const [showModalinfo, setShowModalinfo] = useState(false);
     const [showModalQRCode, setShowModalQRCode] = useState(false);
 
     // state สำหรับข้อมูลเพจ
@@ -44,6 +52,7 @@ function Dashboard() {
     const [selectedUserDetails, setSelectedUserDetails] = useState(null);
     const [selectedID, setSelectedID] = useState(null);
     const [qrEventID, setQrEventID] = useState(null);
+    
 
     // ข้อมูลที่ได้จาก Redux
     const eventData = useSelector(state => state.user.getEventData);
@@ -84,6 +93,11 @@ function Dashboard() {
         setSelectedUserDetails(item);
         setSelectedID(itemID);
     };
+
+    const handleH = (itemID) => {
+        setSelectedID(itemID)
+        setShowModalinfo(true);
+    }
 
     // ลบ
     const handleDelete = (itemID, itemtype) => {
@@ -142,6 +156,7 @@ function Dashboard() {
             role: currentUser?.role,
             status: selectedStatus
         }));
+        setShowModalinfo(false)
         setIsModalOpen(false);
         setShowModalEdit(false);
         setShowModalQRCode(false);
@@ -190,6 +205,7 @@ function Dashboard() {
                         </td>
                         <td>
                             <div className="flex gap-2 justify-center">
+                                <button onClick={()=>handleH(data.id)}>{iconF2}</button>
                                 <button onClick={() => handleEdit(data, data.id)}>
                                     {iconF1}
                                 </button>
@@ -321,6 +337,8 @@ function Dashboard() {
                         />
                     </div>
                 )}
+
+                {showModalinfo && <ModalHDetail onClose={closeModal} eventID={selectedID}/>}
 
             </TitleCard2>
         </>
