@@ -84,7 +84,7 @@ export default function ModalCA({ onClose, onSave }) {
                 { field: 'province', label: 'จังหวัด' },
                 { field: 'event_type', label: 'ประเภทกิจกรรม' }
             ];
-            
+
             for (const { field, label } of requiredFields) {
                 if (!formValues[field] || formValues[field] === '') {
                     Swal.fire({
@@ -95,7 +95,7 @@ export default function ModalCA({ onClose, onSave }) {
                     return;
                 }
             }
-            
+
             // ตรวจสอบว่า endDate น้อยกว่า startDate หรือไม่
             if (formValues.endDate && new Date(formValues.endDate) < new Date(formValues.startDate)) {
                 Swal.fire({
@@ -105,13 +105,13 @@ export default function ModalCA({ onClose, onSave }) {
                 });
                 return;
             }
-        
+
             if (formValues.startTime && formValues.endTime) {
                 const startTimeDate = new Date(`1970-01-01T${formValues.startTime}:00`);
                 const endTimeDate = new Date(`1970-01-01T${formValues.endTime}:00`);
-            
+
                 const timeDifference = (endTimeDate - startTimeDate) / (1000 * 60 * 60);
-            
+
                 if (timeDifference < 1) {
                     Swal.fire({
                         icon: 'error',
@@ -121,8 +121,8 @@ export default function ModalCA({ onClose, onSave }) {
                     return;
                 }
             }
-            
-    
+
+
             const currentDate1 = new Date();
             if (new Date(formValues.startDate) < currentDate1) {
                 Swal.fire({
@@ -132,7 +132,7 @@ export default function ModalCA({ onClose, onSave }) {
                 });
                 return;
             }
-    
+
             // ตรวจสอบว่าเวลาที่เริ่มต้นเป็นเวลาที่ผ่านไปแล้วหรือไม่
             const currentTime = format(currentDate1, 'HH:mm');
             if (formValues.startTime && formValues.startTime < currentTime) {
@@ -144,13 +144,13 @@ export default function ModalCA({ onClose, onSave }) {
                 return;
             }
 
-            console.log(currentTime , formValues.startTime)
-        
+            console.log(currentTime, formValues.startTime)
+
             if (!formValues.admin_id) {
                 console.error("Admin ID is missing");
                 return;
             }
-        
+
             // ถ้าเป็น super_admin แต่ยังไม่เลือก event_type
             if (currentUser?.role === 'super_admin' && !formValues.event_type) {
                 Swal.fire({
@@ -160,7 +160,7 @@ export default function ModalCA({ onClose, onSave }) {
                 });
                 return;
             }
-        
+
             // สร้างรูปแบบข้อความ
             const startDateFormatted = formValues.startDate
                 ? format(new Date(formValues.startDate), "d MMM yyyy", { locale: th })
@@ -171,18 +171,18 @@ export default function ModalCA({ onClose, onSave }) {
             const endTimeFormatted = formValues.endTime
                 ? format(new Date(`1970-01-01T${formValues.endTime}:00`), "HH:mm", { locale: th })
                 : "เวลาไม่ถูกต้อง";
-        
+
             const messageText = `เชิญชวน นศ. ${formValues.event_type === 'special' ? 'กยศ.' : 'ทั่วไป'}
             เข้าร่วม ${formValues.activityName}
             จัดขึ้นในวันที่ ${startDateFormatted}
             เวลา ${startTimeFormatted} - ${endTimeFormatted}
             ณ ${formValues.Nameplace}
           `.trim();
-        
+
             // 1) เรียก createEvent
             const createdResult = await dispatch(createEvent(formValues)).unwrap();
             console.log("สร้างกิจกรรมเสร็จ:", createdResult);
-        
+
             // 2) แจ้งเตือนว่ากิจกรรมสร้างสำเร็จ
             const currentDate = new Date().toLocaleDateString('th-TH', {
                 day: 'numeric',
@@ -193,11 +193,13 @@ export default function ModalCA({ onClose, onSave }) {
                 message: `ได้สร้างกิจกรรมสำเร็จแล้วในวันที่ ${currentDate}`,
                 status: 1
             }));
-        
+
             // 3) เลือกกลุ่มผู้ใช้
-            const isSpecial = (formValues.event_type === 'special');
-            const targetUsers = isSpecial ? specialUsers : normalUsers;
-        
+            // 3) เลือกกลุ่มผู้ใช้
+            const targetUsers = formValues.event_type === 'special'
+                ? specialUsers
+                : [...specialUsers, ...normalUsers];
+
             // 4) ส่งข้อความให้ทีละคน
             const promises = targetUsers.map(user => {
                 const updatedSentData = {
@@ -211,9 +213,10 @@ export default function ModalCA({ onClose, onSave }) {
                 };
                 return dispatch(SentMessage(updatedSentData));
             });
-        
+
             await Promise.all(promises);
-        
+
+
             onSave();
         } catch (err) {
             console.error("Error creating event or sending messages:", err);
@@ -224,7 +227,7 @@ export default function ModalCA({ onClose, onSave }) {
             });
         }
     };
-    
+
     const courses = [
         { value: 'ทุกระดับการศึกษา', name: 'ทุกระดับการศึกษา' },
         { value: 'ปวช.', name: 'ปวช.' },
