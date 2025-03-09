@@ -2,8 +2,8 @@ import React, { useRef } from 'react';
 import { QRCodeSVG } from 'qrcode.react'; // Updated import
 import Swal from 'sweetalert2';
 // https://customer-new.vercel.app/
-const ModalQRCode = ({ onClose, eventID, userDetails }) => {
-    const qrUrl = `https://customer-new.vercel.app/?referral=${eventID}&check=in`;
+const ModalQRCodeout = ({ onClose, eventID, userDetails }) => {
+    const qrUrl = `https://customer-new.vercel.app/?referral=${eventID}&check=out`;
     const svgRef = useRef(null);
 
     const handleDownload = () => {
@@ -36,7 +36,7 @@ const ModalQRCode = ({ onClose, eventID, userDetails }) => {
                 const padding = 50; // พื้นที่รอบ QR Code
 
                 // Define additional text
-                const additionalText = `ลงชื่อเข้า: ${userDetails.activityName}`;
+                const additionalText = `ลงชื่อออก: ${userDetails.activityName}`;
                 const fontSize = 24;
                 const fontFamily = 'Arial';
 
@@ -112,11 +112,11 @@ const ModalQRCode = ({ onClose, eventID, userDetails }) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white rounded-lg p-6 relative">
-                <h2 className="text-xl mb-4">กิจกรรม : {userDetails.activityName}</h2>
+                <h2 className="text-xl mb-4">QR Code ลงชื่อออกกิจกรรม : {userDetails.activityName}</h2>
                 <div className="flex justify-center">
                     <QRCodeSVG value={qrUrl} size={256} ref={svgRef} />
                 </div>
-                <h2 className='mt-1 text-center'>QR Code ลงชื่อเข้าร่วม</h2>
+                <h2 className='mt-1 text-center'>QR Code ลงชื่อออก</h2>
                 <div className="mt-4 flex justify-center gap-2">
                     <button
                         onClick={handleDownload}
@@ -136,4 +136,4 @@ const ModalQRCode = ({ onClose, eventID, userDetails }) => {
     );
 };
 
-export default ModalQRCode;
+export default ModalQRCodeout;

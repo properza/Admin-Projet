@@ -42,7 +42,7 @@ export default function ModalCA({ onClose, onSave }) {
         longitude: null,
         province: '',
         admin_id: currentUser?.adminID,
-        event_type: '' // กำหนดเป็นค่าว่างเริ่มต้น
+        event_type: ''
     });
 
     // console.log(formValues)
@@ -70,7 +70,6 @@ export default function ModalCA({ onClose, onSave }) {
 
     const handleSave = async () => {
         try {
-            // ตรวจสอบว่ามีช่องที่ว่างหรือไม่
             const requiredFields = [
                 { field: 'activityName', label: 'ชื่อกิจกรรม' },
                 { field: 'course', label: 'ระดับการศึกษา' },
@@ -96,7 +95,6 @@ export default function ModalCA({ onClose, onSave }) {
                 }
             }
 
-            // ตรวจสอบว่า endDate น้อยกว่า startDate หรือไม่
             if (formValues.endDate && new Date(formValues.endDate) < new Date(formValues.startDate)) {
                 Swal.fire({
                     icon: 'error',

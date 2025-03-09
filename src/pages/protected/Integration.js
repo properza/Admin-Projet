@@ -74,7 +74,10 @@ function InternalPage() {
                         {data?.branch_st}
                     </td>
                     <td>
-                        {data?.total_hour}
+                        {data?.total_point} ชม.
+                    </td>
+                    <td>
+                        {data?.total_hour} ชม.
                     </td>
                     {/* <td>
                         {timeDisplay}
@@ -104,6 +107,7 @@ function InternalPage() {
                             <th>ชื่อ - นามสกุล</th>
                             <th>คณะ</th>
                             <th>สาขา</th>
+                            <th>เวลาที่เข้าร่วม</th>
                             <th>ชม. สะสม</th>
                             {/* <th>เวลาที่เข้าร่วม</th> */}
                             <th>เพิ่มเติม</th>
