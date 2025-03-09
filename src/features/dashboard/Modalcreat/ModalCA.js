@@ -122,9 +122,13 @@ export default function ModalCA({ onClose, onSave }) {
                 }
             }
 
-
             const currentDate1 = new Date();
-            if (new Date(formValues.startDate) < currentDate1) {
+            currentDate1.setHours(0, 0, 0, 0);
+
+            const selectedDate = new Date(formValues.startDate);
+            selectedDate.setHours(0, 0, 0, 0);
+
+            if (selectedDate < currentDate1) {
                 Swal.fire({
                     icon: 'error',
                     title: 'กรุณาเลือกวันที่ที่ถูกต้อง',
@@ -194,7 +198,6 @@ export default function ModalCA({ onClose, onSave }) {
                 status: 1
             }));
 
-            // 3) เลือกกลุ่มผู้ใช้
             // 3) เลือกกลุ่มผู้ใช้
             const targetUsers = formValues.event_type === 'special'
                 ? specialUsers
