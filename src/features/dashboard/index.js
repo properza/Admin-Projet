@@ -206,6 +206,11 @@ function Dashboard() {
                         <td>{index + 1}</td>
                         <td>{data.id}</td>
                         <td>{data.activityName ?? '-'}</td>
+                        <td className=''>
+                            <p className={`badge-ghost ${data.event_type === 'special' ? 'bg-orange-300' : 'bg-green-300'} mx-auto w-fit rounded-md py-1 px-2 text-center`}>
+                                {data.event_type === 'special' ? 'กยศ.' : 'ทั่วไป'}
+                            </p>
+                        </td>
                         <td>
                             {data.created_at
                                 ? format(new Date(data.created_at), "d MMM yyyy", { locale: th })
@@ -325,6 +330,7 @@ function Dashboard() {
                                 <th>No.</th>
                                 <th>รหัสกิจกรรม</th>
                                 <th>กิจกรรม</th>
+                                <th>ประเภทกิจกรรม</th>
                                 <th>วันที่อัปเดตล่าสุด</th>
                                 <th>จัดการ</th>
                                 <th>QR Code</th>

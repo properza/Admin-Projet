@@ -163,7 +163,7 @@ function Transactions() {
                         <td>{index + 1}</td>
                         <td>{data.id}</td>
                         <td>{data.activityName ?? '-'}</td>
-                        {currentUser?.role === 'super_admin' && <td> <p className={`badge-ghost rounded-md p-1 ${data.event_type === 'normal' ? 'bg-green-300' : 'bg-orange-300'}`}>{data.event_type === 'normal' ? 'ทั่วไป' : 'กยศ.'}</p> </td>}
+                        {currentUser?.role === 'super_admin' && <td> <p className={`badge-ghost rounded-md py-1 px-2 ${data.event_type === 'normal' ? 'bg-green-300' : 'bg-orange-300'} mx-auto w-fit`}>{data.event_type === 'normal' ? 'ทั่วไป' : 'กยศ.'}</p> </td>}
                         <td>
                             {data.created_at ?
                                 format(new Date(data.created_at), "d MMM yyyy", { locale: th })

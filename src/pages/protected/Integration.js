@@ -74,10 +74,10 @@ function InternalPage() {
                         {data?.branch_st}
                     </td>
                     <td>
-                        {data?.total_point} ชม.
+                        {data?.total_Event === '0 ชั่วโมง 0 นาที' ? '-' : data?.total_Event}
                     </td>
                     <td>
-                        {data?.total_hour} ชม.
+                        {data?.total_hour === 0 ? '-' : `${data?.total_hour} ชม.`} 
                     </td>
                     {/* <td>
                         {timeDisplay}

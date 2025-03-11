@@ -69,25 +69,6 @@ function UserDetailModal({ user, isOpen, onClose }) {
             }
         });
     };
-
-    // const handleComplete = async (reID) => {
-    //         if (reID) {
-    //             try {
-    //                 const result = await dispatch(updateCompleted({ rewardID: reID })).unwrap();
-    //                 dispatch(showNotification({
-    //                     message: `ได้แลกของรางวัลสำเร็จแล้ว ${currentDate}`,
-    //                     status: 1,
-    //                 }));
-    //                 dispatch(getRewardUSE(rewardCode))
-    //             } catch (error) {
-    //                 dispatch(showNotification({
-    //                     message: `เกิดข้อผิดพลาด: ${error.message}`,
-    //                     status: 0,
-    //                 }));
-    //                 dispatch(getRewardUSE(rewardCode))
-    //             }
-    //         }
-    //     };
     
     const handleReject = (eventId) => {
         Swal.fire({
@@ -173,7 +154,7 @@ function UserDetailModal({ user, isOpen, onClose }) {
                         }
                     </td>
                     <td>
-                        {data?.pointsEarned}
+                        {data?.activityDurationString}
                     </td>
                     <td>
                         <button
@@ -358,7 +339,7 @@ function UserDetailModal({ user, isOpen, onClose }) {
                                 <th>ลำดับ</th>
                                 <th>กิจกรรม</th>
                                 <th>วันที่เริมกิจกรรม</th>
-                                <th>คะแนน</th>
+                                <th>ชม. กิจกรรม</th>
                                 <th>รูปภาพ</th>
                             </tr>
                         </thead>

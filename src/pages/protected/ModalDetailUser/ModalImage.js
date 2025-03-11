@@ -30,6 +30,7 @@ function ModalImage({ images, isOpen, onClose }) {
               alt={`Image ${index + 1}`}
               className="image-item"
               onClick={() => handleImageClick(image)} // เมื่อคลิกจะเรียก handleImageClick
+              loading="lazy"
             />
           ))}
         </div>
