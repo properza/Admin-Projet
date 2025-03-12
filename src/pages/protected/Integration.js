@@ -24,6 +24,7 @@ function InternalPage() {
     const closeModal = () => {
         setIsModalOpen(false);
         setSelectedUser(null);
+        dispatch(getSpecail(currentPage))
     };
 
     useEffect(() => {

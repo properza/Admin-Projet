@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getDetailUser, getDetailUseruserEvent, getdetailSpecial, fetchCurrentUser , setComplete } from '../../../components/common/userSlice';
+import { getDetailUser, getDetailUseruserEvent, getdetailSpecial, fetchCurrentUser, setComplete } from '../../../components/common/userSlice';
 import './ModalDetail.css'
 import { showNotification } from '../../../features/common/headerSlice';
 import { format } from 'date-fns';
 import { th } from 'date-fns/locale';
 import ModalImage from './ModalImage';
 import ReactPaginate from 'react-paginate';
-import Swal from 'sweetalert2'; 
+import Swal from 'sweetalert2';
 
 function UserDetailModal({ user, isOpen, onClose }) {
     const dispatch = useDispatch()
@@ -22,10 +22,10 @@ function UserDetailModal({ user, isOpen, onClose }) {
     const [activeBtn, setactiveBtn] = useState('กิจกรรม');
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     const [selectedImages, setSelectedImages] = useState([]);
-    
-        useEffect(() => {
-            dispatch(fetchCurrentUser())
-        }, [dispatch])
+
+    useEffect(() => {
+        dispatch(fetchCurrentUser())
+    }, [dispatch])
 
     const openImageModal = (images) => {
         setSelectedImages(images);
@@ -54,7 +54,7 @@ function UserDetailModal({ user, isOpen, onClose }) {
                             showConfirmButton: false,
                             timer: 1500
                         });
-    
+
                         dispatch(getdetailSpecial({ page: currentPage2, userID: user?.customer_id }));
                     })
                     .catch(error => {
@@ -69,7 +69,7 @@ function UserDetailModal({ user, isOpen, onClose }) {
             }
         });
     };
-    
+
     const handleReject = (eventId) => {
         Swal.fire({
             title: 'ต้องการไม่อนุมัติหรือไม่?',
@@ -86,7 +86,7 @@ function UserDetailModal({ user, isOpen, onClose }) {
                             showConfirmButton: false,
                             timer: 1500
                         });
-    
+
                         dispatch(getdetailSpecial({ page: currentPage2, userID: user?.customer_id }));
                     })
                     .catch(error => {
@@ -101,13 +101,45 @@ function UserDetailModal({ user, isOpen, onClose }) {
             }
         });
     };
-    
+
+    const handleStatusChange = (eventId, status) => {
+        Swal.fire({
+            title: `ต้องการเปลี่ยนสถานะเป็น ${status} หรือไม่?`,
+            showCancelButton: true,
+            confirmButtonText: 'ยืนยัน',
+            cancelButtonText: 'ยกเลิก',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                dispatch(setComplete({ eventID: eventId, status: status }))
+                    .then(() => {
+                        Swal.fire({
+                            title: 'ทำรายการสำเร็จ',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                        dispatch(getdetailSpecial({ page: currentPage2, userID: user?.customer_id }));
+                    })
+                    .catch((error) => {
+                        Swal.fire({
+                            title: 'เกิดข้อผิดพลาด',
+                            text: error.message,
+                            icon: 'error',
+                            timer: 1500,
+                        });
+                        dispatch(getdetailSpecial({ page: currentPage2, userID: user?.customer_id }));
+                    });
+            }
+        });
+    };
+
+
     useEffect(() => {
         dispatch(getDetailUser({ page: currentPage, userID: user?.customer_id }))
         dispatch(getDetailUseruserEvent({ page: currentPage2, userID: user?.customer_id }))
         dispatch(getdetailSpecial({ page: currentPage2, userID: user?.customer_id }))
 
-    }, [dispatch, user , currentPage ,currentPage2])
+    }, [dispatch, user, currentPage, currentPage2])
 
     const handlePageChange = ({ selected }) => {
         setCurrentPage(selected + 1);
@@ -209,7 +241,7 @@ function UserDetailModal({ user, isOpen, onClose }) {
                             {image}
                         </button>
                     </td>
-                    {currentUser?.role === 'special' && 
+                    {currentUser?.role === 'special' &&
                         <td>
                             <div className="flex justify-center gap-1">
                                 <select className='border border-gray-400 p-1 rounded-md' name="" id="">
@@ -222,7 +254,7 @@ function UserDetailModal({ user, isOpen, onClose }) {
                             </div>
 
                         </td>
-                        }
+                    }
                 </tr>
             );
         });
@@ -268,9 +300,9 @@ function UserDetailModal({ user, isOpen, onClose }) {
                             {image}
                         </button>
                     </td>
-                    {user.st_tpye === 'กยศ.' && 
+                    {user.st_tpye === 'กยศ.' &&
                         <td>
-                            {data.status === 'รอดำเนินการ' ?
+                            {/* {data.status === 'รอดำเนินการ' ?
                             <div className="flex justify-center gap-2">
                                 <button 
                                     className='border border-green-600  rounded-md text-green-600  p-2'
@@ -289,25 +321,41 @@ function UserDetailModal({ user, isOpen, onClose }) {
                             <p className='w-8 h-8'>{iconCorrect}</p>:
                             data.status === 'ไม่อนุมัติ' ?
                             <p className='w-8 h-8'>{iconWrong}</p>: null
-                            }
+                            } */}
+
+                            <div className="flex justify-center gap-2">
+                                <select
+                                    className={`border p-1 rounded-md ${data.status === 'อนุมัติ' ? 'border-green-600 text-green-600' :
+                                        data.status === 'ไม่อนุมัติ' ? 'border-red-400 text-red-400' :
+                                            'border-gray-400 text-gray-400'}`}
+                                    value={data.status}
+                                    onChange={(e) => handleStatusChange(data.id, e.target.value)}
+                                >
+                                    <option value="รอดำเนินการ">รอดำเนินการ</option>
+                                    <option value="อนุมัติ">อนุมัติ</option>
+                                    <option value="ไม่อนุมัติ">ไม่อนุมัติ</option>
+                                </select>
+                            </div>
+
+
 
                         </td>
-                        }
+                    }
                 </tr>
             );
         });
     };
 
-    const iconCorrect = 
+    const iconCorrect =
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="green" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
         </svg>;
-    const iconWrong = 
+    const iconWrong =
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="m8.99 14.993 6-6m6 3.001c0 1.268-.63 2.39-1.593 3.069a3.746 3.746 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043 3.745 3.745 0 0 1-3.068 1.593c-1.268 0-2.39-.63-3.068-1.593a3.745 3.745 0 0 1-3.296-1.043 3.746 3.746 0 0 1-1.043-3.297 3.746 3.746 0 0 1-1.593-3.068c0-1.268.63-2.39 1.593-3.068a3.746 3.746 0 0 1 1.043-3.297 3.745 3.745 0 0 1 3.296-1.042 3.745 3.745 0 0 1 3.068-1.594c1.268 0 2.39.63 3.068 1.593a3.745 3.745 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.297 3.746 3.746 0 0 1 1.593 3.068ZM9.74 9.743h.008v.007H9.74v-.007Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm4.125 4.5h.008v.008h-.008v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
         </svg>;
-    
-    
+
+
 
     if (!isOpen || !user) return null;
     return (
@@ -326,28 +374,28 @@ function UserDetailModal({ user, isOpen, onClose }) {
                 </div>
                 <div className="flex gap-2 my-2">
                     <button className={`${activeBtn === 'กิจกรรม' ? 'active' : ''}`} onClick={() => setactiveBtn('กิจกรรม')}>กิจกรรม</button>
-                    
-                    <button className={`${activeBtn === 'กิจกรรมพิเศษ' ? 'active' : ''}`} onClick={() => setactiveBtn('กิจกรรมพิเศษ')}>{user.st_tpye === 'กยศ.' ? 'กิจกรรมจิตอาสา' : 'กิจกรรมพิเศษ' }</button>
+
+                    <button className={`${activeBtn === 'กิจกรรมพิเศษ' ? 'active' : ''}`} onClick={() => setactiveBtn('กิจกรรมพิเศษ')}>{user.st_tpye === 'กยศ.' ? 'กิจกรรมจิตอาสา' : 'กิจกรรมพิเศษ'}</button>
 
                 </div>
 
                 {activeBtn === 'กิจกรรม' ? <>
-                <div className="overflow-auto h-[30vh]">
-                    <table className='table'>
-                        <thead>
-                            <tr>
-                                <th>ลำดับ</th>
-                                <th>กิจกรรม</th>
-                                <th>วันที่เริมกิจกรรม</th>
-                                <th>ชม. กิจกรรม</th>
-                                <th>รูปภาพ</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {renderEvents()}
-                        </tbody>
-                    </table>
-                </div>
+                    <div className="overflow-auto h-[30vh]">
+                        <table className='table'>
+                            <thead>
+                                <tr>
+                                    <th>ลำดับ</th>
+                                    <th>กิจกรรม</th>
+                                    <th>วันที่เริมกิจกรรม</th>
+                                    <th>ชม. กิจกรรม</th>
+                                    <th>รูปภาพ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {renderEvents()}
+                            </tbody>
+                        </table>
+                    </div>
                     {detailUserEventdata.meta?.total >= 10 &&
                         <div className="flex justify-end mt-10">
                             <ReactPaginate
@@ -373,83 +421,83 @@ function UserDetailModal({ user, isOpen, onClose }) {
                         </div>
                     }
 
-                </>:
-                <>
-                <div className="overflow-auto h-[30vh]">
-                    <table className='table'>
-                        <thead>
-                            <tr>
-                                <th>ลำดับ</th>
-                                <th>กิจกรรม</th>
-                                <th>ประเภทกิจกรรม</th>
-                                <th>วันที่เพิ่มกิจกรรม</th>
-                                <th>รูปภาพ</th>
-                                {user.st_tpye === 'กยศ.' && <th>จัดการ</th> }
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {user.st_tpye !== 'กยศ.' ?
-                                renderspecailEvents():
-                                renderspecailUser()
-                            }
-                        </tbody>
-
-                    </table>
-                </div>
-                {user.st_tpye !== 'กยศ.' ?<>
-                    {detailUserdata.meta?.total >= 10 &&
-                        <div className="flex justify-end mt-10">
-                            <ReactPaginate
-                                previousLabel={"<"}
-                                nextLabel={">"}
-                                breakLabel={"..."}
-                                pageCount={detailUserdata.meta?.last_page || 1}
-                                marginPagesDisplayed={2}
-                                pageRangeDisplayed={3}
-                                onPageChange={handlePageChange2}
-                                containerClassName={"pagination"}
-                                activeClassName={"active"}
-                                breakClassName={"page-item"}
-                                breakLinkClassName={"page-link"}
-                                pageClassName={"page-item"}
-                                pageLinkClassName={"page-link"}
-                                previousClassName={"page-item"}
-                                previousLinkClassName={"page-link"}
-                                nextClassName={"page-item"}
-                                nextLinkClassName={"page-link"}
-                                disabledClassName={"disabled"}
-                            />
-                        </div>
-                    }</>:
+                </> :
                     <>
-                    {detailspecialdata.meta?.total >= 10 &&
-                        <div className="flex justify-end mt-10">
-                            <ReactPaginate
-                                previousLabel={"<"}
-                                nextLabel={">"}
-                                breakLabel={"..."}
-                                pageCount={detailspecialdata.meta?.last_page || 1}
-                                marginPagesDisplayed={2}
-                                pageRangeDisplayed={3}
-                                onPageChange={handlePageChange2}
-                                containerClassName={"pagination"}
-                                activeClassName={"active"}
-                                breakClassName={"page-item"}
-                                breakLinkClassName={"page-link"}
-                                pageClassName={"page-item"}
-                                pageLinkClassName={"page-link"}
-                                previousClassName={"page-item"}
-                                previousLinkClassName={"page-link"}
-                                nextClassName={"page-item"}
-                                nextLinkClassName={"page-link"}
-                                disabledClassName={"disabled"}
-                            />
+                        <div className="overflow-auto h-[30vh]">
+                            <table className='table'>
+                                <thead>
+                                    <tr>
+                                        <th>ลำดับ</th>
+                                        <th>กิจกรรม</th>
+                                        <th>ประเภทกิจกรรม</th>
+                                        <th>วันที่เพิ่มกิจกรรม</th>
+                                        <th>รูปภาพ</th>
+                                        {user.st_tpye === 'กยศ.' && <th>จัดการ</th>}
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {user.st_tpye !== 'กยศ.' ?
+                                        renderspecailEvents() :
+                                        renderspecailUser()
+                                    }
+                                </tbody>
+
+                            </table>
                         </div>
-                    }
+                        {user.st_tpye !== 'กยศ.' ? <>
+                            {detailUserdata.meta?.total >= 10 &&
+                                <div className="flex justify-end mt-10">
+                                    <ReactPaginate
+                                        previousLabel={"<"}
+                                        nextLabel={">"}
+                                        breakLabel={"..."}
+                                        pageCount={detailUserdata.meta?.last_page || 1}
+                                        marginPagesDisplayed={2}
+                                        pageRangeDisplayed={3}
+                                        onPageChange={handlePageChange2}
+                                        containerClassName={"pagination"}
+                                        activeClassName={"active"}
+                                        breakClassName={"page-item"}
+                                        breakLinkClassName={"page-link"}
+                                        pageClassName={"page-item"}
+                                        pageLinkClassName={"page-link"}
+                                        previousClassName={"page-item"}
+                                        previousLinkClassName={"page-link"}
+                                        nextClassName={"page-item"}
+                                        nextLinkClassName={"page-link"}
+                                        disabledClassName={"disabled"}
+                                    />
+                                </div>
+                            }</> :
+                            <>
+                                {detailspecialdata.meta?.total >= 10 &&
+                                    <div className="flex justify-end mt-10">
+                                        <ReactPaginate
+                                            previousLabel={"<"}
+                                            nextLabel={">"}
+                                            breakLabel={"..."}
+                                            pageCount={detailspecialdata.meta?.last_page || 1}
+                                            marginPagesDisplayed={2}
+                                            pageRangeDisplayed={3}
+                                            onPageChange={handlePageChange2}
+                                            containerClassName={"pagination"}
+                                            activeClassName={"active"}
+                                            breakClassName={"page-item"}
+                                            breakLinkClassName={"page-link"}
+                                            pageClassName={"page-item"}
+                                            pageLinkClassName={"page-link"}
+                                            previousClassName={"page-item"}
+                                            previousLinkClassName={"page-link"}
+                                            nextClassName={"page-item"}
+                                            nextLinkClassName={"page-link"}
+                                            disabledClassName={"disabled"}
+                                        />
+                                    </div>
+                                }
+                            </>
+                        }
                     </>
-                     }
-                </>
                 }
 
                 <ModalImage
@@ -458,7 +506,7 @@ function UserDetailModal({ user, isOpen, onClose }) {
                     onClose={closeImageModal}
                 />
 
-                
+
 
                 <div className="flex justify-end mt-5">
                     <button onClick={onClose} className='border border-black text-black py-1 rounded-md px-2 hover:bg-gray-400'>

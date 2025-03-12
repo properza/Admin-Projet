@@ -86,7 +86,7 @@ function RewardModal({
           </div>
 
           <div>
-            <label className="label">คะแนนที่ใช้แลก (points_required)</label>
+            <label className="label">คะแนนที่ใช้แลก</label>
             <input
               type="number"
               name="points_required"
@@ -98,7 +98,7 @@ function RewardModal({
           </div>
 
           <div>
-            <label className="label">จำนวนของรางวัล (amount)</label>
+            <label className="label">จำนวนของรางวัล </label>
             <input
               type="number"
               name="amount"
@@ -139,7 +139,7 @@ function RewardModal({
                 checked={formData.can_redeem}
                 onChange={handleChange}
               />
-              <label>อนุญาตให้แลก (can_redeem)</label>
+              <label>อนุญาตให้แลก</label>
             </div>
           )}
 
