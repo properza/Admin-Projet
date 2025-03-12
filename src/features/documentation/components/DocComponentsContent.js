@@ -71,7 +71,6 @@ function DocComponentsContent() {
 
     const closeModal = () => {
         setIsModalOpen(false);
-        // เคลียร์ค่า หรือคงค่าเดิมก็ได้
         setFormData({
             reward_name: '',
             points_required: '',
@@ -168,15 +167,18 @@ function DocComponentsContent() {
         formDataToSend.append('amount', formData.amount);
         formDataToSend.append('can_redeem', formData.can_redeem);
     
-        // Append files (multiple files if present)
-        if (formData.images && formData.images.length > 0) {
-            formData.images.forEach((file) => {
+        // Append files (multiple files if present) only if images are files
+        if (formData.images && formData.images instanceof File) {
+            formDataToSend.append('images', formData.images);  // Append single file
+        } else if (formData.images && formData.images instanceof FileList) {
+            // If images is a FileList (multiple files), we append them
+            Array.from(formData.images).forEach((file) => {
                 formDataToSend.append('images', file);  // Append each file
             });
         } else {
-            console.log('No images to append');
+            console.log('No images to append or images is not a valid File.');
         }
-
+    
         console.log([...formDataToSend]);
     
         // If we are in edit mode, we are updating an existing reward
@@ -192,7 +194,7 @@ function DocComponentsContent() {
                 return;
             }
     
-            const { id, ...rest } = formData; // Extract id, leave rest of the fields as is
+            const { id, ...rest } = formData;
             dispatch(updateReward({ rewardID: id, formData: formDataToSend }))
                 .unwrap()
                 .then(() => {
@@ -216,7 +218,6 @@ function DocComponentsContent() {
                     });
                 });
         } else {
-            // Otherwise, create a new reward
             dispatch(createReward({ formData: formDataToSend }))
                 .unwrap()
                 .then(() => {
@@ -226,10 +227,8 @@ function DocComponentsContent() {
                         showConfirmButton: false,
                         timer: 1500
                     });
-                    dispatch(getReward(currentPage)); // Reload rewards
+                    dispatch(getReward(currentPage));
                     closeModal();
-    
-                    // Send notification
                     const currentDate = new Date();
                     const formattedDate = currentDate.toLocaleDateString('th-TH', {
                         day: 'numeric',
@@ -253,6 +252,7 @@ function DocComponentsContent() {
                 });
         }
     };
+    
 
     /* -------------------- RENDER TABLE -------------------- */
     const renderReward = () => {

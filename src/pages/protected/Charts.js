@@ -74,6 +74,9 @@ function InternalPage() {
                         {data?.branch_st}
                     </td>
                     <td>
+                        {data?.total_point}
+                    </td>
+                    <td>
                         {data?.total_Event === '0 ชั่วโมง 0 นาที' ? '-' : data?.total_Event}
                     </td>
                     <td>
@@ -100,6 +103,7 @@ function InternalPage() {
                             <th>ชื่อ - นามสกุล</th>
                             <th>คณะ</th>
                             <th>สาขา</th>
+                            <th>คะแนน</th>
                             <th>เวลาที่เข้าร่วมกิจกรรม</th>
                             <th>เพิ่มเติม</th>
                         </tr>
