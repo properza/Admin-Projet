@@ -13,7 +13,7 @@ const GetEventsAll = {
   special: (page , status)=> `${baseUrl}admin/event/special?page=${page}&per_page=10&status=${status}`
 }
 
-const getDetail = (eventID) => `${baseUrl}events/events/${eventID}/customers`;
+const getDetail = (eventID , page) => `${baseUrl}events/events/${eventID}/customers?page=${page}&per_page=20`;
 
 const GetAll ={
   normal: (page) => `${baseUrl}customer/customers?page=${page}&per_page=10&st_tpye=ทั่วไป`,
@@ -532,7 +532,7 @@ export const getEvent = createAsyncThunk(
 
 export const getEventDetail = createAsyncThunk(
   "users/getEventDetails",
-  async ({ eventID }, { getState, rejectWithValue }) => {
+  async ({page , eventID }, { getState, rejectWithValue }) => {
     const token = getState().user.userToken;
 
     if (!token) {
@@ -541,7 +541,7 @@ export const getEventDetail = createAsyncThunk(
 
 
     try {
-      const response = await axios.get(getDetail(eventID), {
+      const response = await axios.get(getDetail(eventID , page), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
