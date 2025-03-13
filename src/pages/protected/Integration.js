@@ -33,7 +33,7 @@ function InternalPage() {
 
     useEffect(() => {
         dispatch(getSpecail(currentPage))
-    }, [dispatch])
+    }, [dispatch , currentPage])
 
     const handlePageChange = ({ selected }) => {
         setCurrentPage(selected + 1);
