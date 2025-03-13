@@ -17,7 +17,7 @@ export default function ModalHDetail({ onClose , eventID }) {
     const error = useSelector(state => state.user.error);
     
     useEffect(()=>{
-        dispatch(getEventDetail({page:currentPage , eventID:eventID }))
+        dispatch(getEventDetail({ eventID:eventID }))
     },[dispatch,currentPage])
 
     const handlePageChange = ({ selected }) => {
@@ -104,7 +104,7 @@ export default function ModalHDetail({ onClose , eventID }) {
                 <div className="grid justify-start">
                     <p>ทั้งหมด {eventDataDe?.meta?.total} รายการ</p>
                 </div>
-                <div className="overflow-y-auto h-[50vh]">
+                <div className="overflow-y-auto h-[40vh]">
                     <table className='table text-center'>
                         <thead className=''>
                             <tr>
@@ -121,7 +121,7 @@ export default function ModalHDetail({ onClose , eventID }) {
                         </tbody>
                     </table>
                 </div>
-                    {eventDataDe.meta?.total >= 10 &&
+                    {/* {eventDataDe.meta?.total >= 10 &&
                             <div className="flex justify-end mt-10">
                                 <ReactPaginate
                                     previousLabel={"<"}
@@ -144,7 +144,7 @@ export default function ModalHDetail({ onClose , eventID }) {
                                     disabledClassName={"disabled"}
                                 />
                             </div>
-                        }
+                        } */}
                 </div>
                 <div className="flex justify-end">
                     <button onClick={onClose} className="btn border border-black bg-white">ปิด</button>
